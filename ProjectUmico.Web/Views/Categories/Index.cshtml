@@ -1,0 +1,55 @@
+﻿@model CategoriesViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    @using (Html.BeginForm("Add", "Categories", "POST"))
+    {
+        <input class="form-control" asp-for="CategoryName" />
+        <input class="form-control" asp-for="CategoryParentName" />
+        <button class="bg-primary" type="submit">Add</button>
+    }
+
+    <div class="row">
+        <div class="col">
+            <p>CategoryName</p>
+        </div>
+        <div class="col">
+            <p>CategoryParent</p>
+        </div>
+        <div class="col">
+            <p>Control</p>
+        </div>
+    </div>
+
+    @if (@Model != null && Model.Categories.Count > 0)
+    {
+        @foreach (var category in @Model.Categories)
+        {
+            <div class="row">
+                <div class="col">
+                    <p>@category.CategoryName</p>
+                </div>
+                <div class="col">
+                    <p>@category.CategoryParentName</p>
+                </div>
+                <div class="col">
+                    @using (Html.BeginForm("Delete", "Categories", new {id=category.CategoryId},FormMethod.Post))
+                    {
+                        <button class="btn-danger" type="submit">Delete</button>
+                    }
+                    @* <a class="text-secondary mx-1" asp-action="Edit" asp-controller="Categories" asp-route-id="@category.CategoryId"></a> *@
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-danger">No Categories</p>
+    }
+
+
+</div>

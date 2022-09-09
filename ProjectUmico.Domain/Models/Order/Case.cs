@@ -12,7 +12,7 @@ public class Case : BaseAuditableEntity
     // public string CreatedBy { get; set; }
     
     public ApplicationUser? User { get; set; }
-    public int? UserId { get; set; }
+    public string? UserId { get; set; }
     
     public Company? Company { get; set; }
     public string? CompanyId { get; set; }

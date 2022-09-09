@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectUmico.Infrastructure.Persistance;
 
@@ -11,9 +12,10 @@ using ProjectUmico.Infrastructure.Persistance;
 namespace ProjectUmico.Infrastructure.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220909103352_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,6 +98,9 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("UserPersistanceId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
 
@@ -637,6 +642,27 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.HasDiscriminator<string>("RatingType").HasValue("RatingBase");
                 });
 
+            modelBuilder.Entity("umico.Models.UserPersistance.UserPersistance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserPersistance");
+                });
+
             modelBuilder.Entity("umico.Models.Company", b =>
                 {
                     b.HasBaseType("ApplicationUser");
@@ -670,6 +696,17 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.HasIndex("ProductId");
 
                     b.HasDiscriminator().HasValue("ProductRating");
+                });
+
+            modelBuilder.Entity("ApplicationUser", b =>
+                {
+                    b.HasOne("umico.Models.UserPersistance.UserPersistance", "UserPersistance")
+                        .WithOne("User")
+                        .HasForeignKey("ApplicationUser", "UserPersistanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserPersistance");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -757,8 +794,7 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 {
                     b.HasOne("umico.Models.Categories.Category", "Parent")
                         .WithMany("Children")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("ParentId");
 
                     b.Navigation("Parent");
                 });
@@ -907,6 +943,12 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
             modelBuilder.Entity("umico.Models.ProductAtribute", b =>
                 {
                     b.Navigation("Children");
+                });
+
+            modelBuilder.Entity("umico.Models.UserPersistance.UserPersistance", b =>
+                {
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("umico.Models.Company", b =>

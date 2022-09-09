@@ -1,0 +1,44 @@
+﻿@model RegisterViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<p class="card-title display-1 text-primary fw-bold">Register</p>
+@using (Html.BeginForm("Register", "Authentication", "POST"))
+{
+    <div class="form-group my-2">
+        <label asp-for="Email">Email address</label>
+        <input asp-for="Email" class="form-control" placeholder="Enter email">
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Name">Name</label>
+        <input asp-for="Name" class="form-control" id="exampleNameInput" placeholder="Enter name">
+        <span class="text-danger" asp-validation-for="Name"></span>
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Password">Password</label>
+        <input asp-for="Password" class="form-control" placeholder="Password">
+        <span class="text-danger" asp-validation-for="Password"></span>
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="RePassword">Repeat password</label>
+        <input asp-for="RePassword" class="form-control" placeholder="Repeat password">
+        <span class="text-danger" asp-validation-for="RePassword"></span>
+    </div>
+    <div class="form-group form-check my-2">
+        <input asp-for="RememberMe" class="form-check-input">
+        <label class="form-check-label" asp-for="RememberMe">Remember me</label>
+        <span class="text-danger" asp-validation-for="RememberMe"></span>
+    </div>
+    <div class="form-group form-check my-2">
+        <input asp-for="IsCompany" class="form-check-input">
+        <label class="form-check-label" asp-for="IsCompany">IsCompany</label>
+        <span class="text-danger" asp-validation-for="IsCompany"></span>
+    </div>
+    <button type="submit" class="btn btn-primary" name="Register">Register</button>
+
+    <div class="my-4 card-subtitle text-danger" asp-validation-summary="All"></div>
+}

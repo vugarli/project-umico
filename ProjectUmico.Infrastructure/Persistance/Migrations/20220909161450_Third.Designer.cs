@@ -12,8 +12,8 @@ using ProjectUmico.Infrastructure.Persistance;
 namespace ProjectUmico.Infrastructure.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220909082840_Initial")]
-    partial class Initial
+    [Migration("20220909161450_Third")]
+    partial class Third
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -98,9 +98,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("UserPersistanceId")
-                        .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
 
@@ -398,10 +395,7 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -410,7 +404,7 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Cases");
                 });
@@ -553,7 +547,7 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
 
                     b.HasIndex("ParentAttributeId");
 
-                    b.ToTable("Atributes");
+                    b.ToTable("ProductAtributes");
                 });
 
             modelBuilder.Entity("umico.Models.Promotion", b =>
@@ -645,26 +639,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.HasDiscriminator<string>("RatingType").HasValue("RatingBase");
                 });
 
-            modelBuilder.Entity("umico.Models.UserPersistance.UserPersistance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserPersistance");
-                });
-
             modelBuilder.Entity("umico.Models.Company", b =>
                 {
                     b.HasBaseType("ApplicationUser");
@@ -698,17 +672,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.HasIndex("ProductId");
 
                     b.HasDiscriminator().HasValue("ProductRating");
-                });
-
-            modelBuilder.Entity("ApplicationUser", b =>
-                {
-                    b.HasOne("umico.Models.UserPersistance.UserPersistance", "UserPersistance")
-                        .WithOne("User")
-                        .HasForeignKey("ApplicationUser", "UserPersistanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserPersistance");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -796,7 +759,8 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 {
                     b.HasOne("umico.Models.Categories.Category", "Parent")
                         .WithMany("Children")
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Parent");
                 });
@@ -840,7 +804,7 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
 
                     b.HasOne("ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Company");
 
@@ -945,12 +909,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
             modelBuilder.Entity("umico.Models.ProductAtribute", b =>
                 {
                     b.Navigation("Children");
-                });
-
-            modelBuilder.Entity("umico.Models.UserPersistance.UserPersistance", b =>
-                {
-                    b.Navigation("User")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("umico.Models.Company", b =>

@@ -2,16 +2,17 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Infrastructure.Identity;
 using umico.Models;
 using umico.Models.Categories;
 using umico.Models.Order;
 using umico.Models.Rating;
-using umico.Models.UserPersistance;
+// using umico.Models.UserPersistance;
 
 namespace ProjectUmico.Infrastructure.Persistance;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
 {
     private readonly IConfiguration _configuration;
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IConfiguration configuration):base(options)
@@ -110,7 +111,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<Category>()
             .HasOne(s => s.Parent)
             .WithMany(m => m.Children)
-            .HasForeignKey(e => e.ParentId);
+            .HasForeignKey(e => e.ParentId)
+            .OnDelete(DeleteBehavior.NoAction);
         // Attribute
 
         modelBuilder.Entity<ProductAtribute>()
@@ -126,10 +128,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(o => o.OrderId)
             .HasPrincipalKey(o => o.Id);
 
-        modelBuilder.Entity<ApplicationUser>()
-            .HasOne<UserPersistance>(o => o.UserPersistance)
-            .WithOne(o => o.User)
-            .HasForeignKey<ApplicationUser>(o => o.UserPersistanceId);
+        // modelBuilder.Entity<ApplicationUser>()
+        //     .HasOne<UserPersistance>(o => o.UserPersistance)
+        //     .WithOne(o => o.User)
+        //     .HasForeignKey<ApplicationUser>(o => o.UserPersistanceId);
 
         // Console.WriteLine(modelBuilder.Model.ToDebugString());
         base.OnModelCreating(modelBuilder);

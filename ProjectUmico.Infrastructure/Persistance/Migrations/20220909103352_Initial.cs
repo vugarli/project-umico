@@ -24,29 +24,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Atributes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ParentAttributeId = table.Column<int>(type: "int", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Atributes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Atributes_Atributes_ParentAttributeId",
-                        column: x => x.ParentAttributeId,
-                        principalTable: "Atributes",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -66,6 +43,29 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         name: "FK_Categories_Categories_ParentId",
                         column: x => x.ParentId,
                         principalTable: "Categories",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductAtributes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentAttributeId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductAtributes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductAtributes_ProductAtributes_ParentAttributeId",
+                        column: x => x.ParentAttributeId,
+                        principalTable: "ProductAtributes",
                         principalColumn: "Id");
                 });
 
@@ -97,7 +97,7 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -200,9 +200,9 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 {
                     table.PrimaryKey("PK_ProductProductAtribute", x => new { x.AtributesId, x.ProductsId });
                     table.ForeignKey(
-                        name: "FK_ProductProductAtribute_Atributes_AtributesId",
+                        name: "FK_ProductProductAtribute_ProductAtributes_AtributesId",
                         column: x => x.AtributesId,
-                        principalTable: "Atributes",
+                        principalTable: "ProductAtributes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -443,8 +443,7 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CompanyId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CaseDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -465,8 +464,8 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Cases_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Cases_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -523,11 +522,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Atributes_ParentAttributeId",
-                table: "Atributes",
-                column: "ParentAttributeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Cases_CompanyId",
                 table: "Cases",
                 column: "CompanyId");
@@ -538,9 +532,9 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cases_UserId1",
+                name: "IX_Cases_UserId",
                 table: "Cases",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_ParentId",
@@ -571,6 +565,11 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductAtributes_ParentAttributeId",
+                table: "ProductAtributes",
+                column: "ParentAttributeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductProductAtribute_ProductsId",
@@ -639,7 +638,7 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Atributes");
+                name: "ProductAtributes");
 
             migrationBuilder.DropTable(
                 name: "CompanyProductSaleEntries");

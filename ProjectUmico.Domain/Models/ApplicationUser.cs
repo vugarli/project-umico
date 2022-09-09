@@ -15,7 +15,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using umico.Models.Rating;
-using umico.Models.UserPersistance;
+// using umico.Models.UserPersistance;
 
 public class ApplicationUser : IdentityUser
 {
@@ -25,7 +25,7 @@ public class ApplicationUser : IdentityUser
     public List<RatingBase> Ratings { get; set; }
 
     public int UserPersistanceId { get; set; }
-    public UserPersistance UserPersistance { get; set; }
+    // public UserPersistance UserPersistance { get; set; }
     
     // Sebet itemleri
     // Muqayise

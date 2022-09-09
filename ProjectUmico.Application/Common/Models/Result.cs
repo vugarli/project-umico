@@ -19,4 +19,9 @@ public class Result
     {
         return new Result(false,errors);
     }
+    
+    public static Result Failure()
+    {
+        return new Result(false,Array.Empty<string>());
+    }
 }

@@ -1,0 +1,32 @@
+﻿@model LoginViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<p class="card-title display-1 text-success fw-bold">Login</p>
+@using (Html.BeginForm("Login", "Authentication", "POST"))
+{
+    <div class="form-group my-2">
+        <label asp-for="Email">Email address</label>
+        <input asp-for="Email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+    <div class="form-group my-2">
+        <label asp-for="Password">Password</label>
+        <input asp-for="Password" class="form-control" placeholder="Password">
+        <span class="text-danger" asp-validation-for="Password"></span>
+    </div>
+    <div class="form-group form-check my-2">
+        <input asp-for="RememberMe" class="form-check-input">
+        <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+    </div>
+    <div class="form-group form-check my-2">
+        <input asp-for="IsCompany" class="form-check-input">
+        <label asp-for="IsCompany" class="form-check-label">IsCompany</label>
+    </div>
+    <button type="submit" class="btn btn-success" name="Login">Login</button>
+    <div class="my-4 card-subtitle text-danger" asp-validation-summary="All"></div>
+       
+}

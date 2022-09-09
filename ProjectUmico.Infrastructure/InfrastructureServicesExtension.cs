@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Infrastructure.Persistance;
 
 namespace ProjectUmico.Infrastructure;
@@ -16,6 +17,8 @@ public static class InfrastructureServicesExtension
         {
             options.UseSqlServer(Configuration["DbConnect"]);
         });
+        
+        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         
         // entity config?
         // inject config to decide whether to use in mem db or sql one
