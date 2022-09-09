@@ -3,7 +3,7 @@ using umico.Models.Rating;
 
 namespace umico.Models;
 
-public class Company : User
+public class Company : ApplicationUser
 {
     public string CompanyLogo { get; set; }
     public List<CompanyRating> CompanyRatings { get; set; } // ratings that users gave

@@ -8,6 +8,6 @@ public class Category : BaseAuditableEntity
 
     public Category? Parent { get; set; }
     public int? ParentId { get; set; }
-    public ICollection<Category> Children { get; set; }
+    public ICollection<Category>? Children { get; set; }
 
 }

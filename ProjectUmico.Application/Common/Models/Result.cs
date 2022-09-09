@@ -15,8 +15,8 @@ public class Result
     {
         return new Result(true,Array.Empty<string>());
     }
-    public static Result Failure()
+    public static Result Failure(IEnumerable<string> errors)
     {
-        return new Result(false,Array.Empty<string>());
+        return new Result(false,errors);
     }
 }

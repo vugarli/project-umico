@@ -13,15 +13,15 @@ public class Product : BaseAuditableEntity
     public string ThumbnailUrl { get; set; }
 
     // Ratings
-    public List<ProductRating> ProductRatings { get; set; }
+    public ICollection<ProductRating>? ProductRatings { get; set; }
     
     // SaleEntries
-    public List<CompanyProductSaleEntry> SaleEntriesList { get; set; } // Satis
+    public ICollection<CompanyProductSaleEntry> SaleEntriesList { get; set; } // Satis
     //public List<CompanyProductPromotionSaleEntries> PromotionSaleEntriesList { get; set; } // Satis aksiya
     
     public List<Promotion> ProductInPromotions { get; set; }
     
-    public List<Atribute> Atributes { get; set; }
+    public List<ProductAtribute> Atributes { get; set; }
 
      public Category Category { get; set; }
      public int CategoryId { get; set; }

@@ -11,11 +11,11 @@ public class Case : BaseAuditableEntity
     // user yada company ola biler
     // public string CreatedBy { get; set; }
     
-    public User? User { get; set; }
+    public ApplicationUser? User { get; set; }
     public int? UserId { get; set; }
     
     public Company? Company { get; set; }
-    public int? CompanyId { get; set; }
+    public string? CompanyId { get; set; }
 
     public string CaseDescription { get; set; }
     public string Comment { get; set; }

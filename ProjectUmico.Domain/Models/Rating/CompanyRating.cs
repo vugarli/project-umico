@@ -3,5 +3,5 @@
 public class CompanyRating : RatingBase
 {
     public Company? Company { get; set; }
-    public int? CompanyId { get; set; }
+    public string? CompanyId { get; set; }
 }
