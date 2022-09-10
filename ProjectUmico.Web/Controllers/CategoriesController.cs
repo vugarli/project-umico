@@ -19,9 +19,9 @@ public class CategoriesController : Controller
         _mediator = mediator;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int pageNumber,int pageSize)
     {
-        var categories = await _mediator.Send(new GetAllCategories());
+        var categories = await _mediator.Send(new GetAllCategories(pageNumber,pageSize));
         
         var model = new CategoriesViewModel()
         {

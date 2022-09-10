@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ProjectUmico.Application.Common;
 using ProjectUmico.Application.Dtos;
 using umico.Models.Categories;
 
@@ -20,6 +21,8 @@ public class MappingProfile : Profile
                 opt.MapFrom(orig=>orig.Parent.Name));
         
         CreateMap<CategoryDto,Category>();
+
         
+
     }
 }
