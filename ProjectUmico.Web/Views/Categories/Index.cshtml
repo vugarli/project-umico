@@ -1,4 +1,4 @@
-﻿@model CategoriesViewModel
+﻿@model ProjectUmico.Web.ViewModels.Categories.CategoriesViewModel
 
 @{
     ViewBag.Title = "title";
@@ -6,12 +6,13 @@
 }
 
 <div class="container">
-    @using (Html.BeginForm("Add", "Categories", "",FormMethod.Post))
+    
+    @using (Html.BeginForm("Add", "Categories", "", FormMethod.Post))
     {
         <label asp-for="CategoryName"></label>
-        <input class="form-control" asp-for="CategoryName" />
+        <input class="form-control" asp-for="CategoryName"/>
         <label asp-for="CategoryParentName"></label>
-        <input class="form-control" asp-for="CategoryParentName" />
+        <input class="form-control" asp-for="CategoryParentName"/>
         <button class="m-3 bg-primary" type="submit">Add</button>
     }
 
@@ -39,11 +40,13 @@
                     <p>@category.CategoryParentName</p>
                 </div>
                 <div class="col">
-                    @using (Html.BeginForm("Delete", "Categories", new {id=category.CategoryId},FormMethod.Post))
+                    <div class="btn-group">
+                    @using (Html.BeginForm("Delete", "Categories", new {id = category.CategoryId}, FormMethod.Post))
                     {
                         <button class="btn-danger" type="submit">Delete</button>
                     }
-                    @* <a class="text-secondary mx-1" asp-action="Edit" asp-controller="Categories" asp-route-id="@category.CategoryId"></a> *@
+                    <a class="p-1 lh-1 btn-success" asp-action="Edit" asp-controller="Categories" asp-route-id="@category.CategoryId">Edit</a>
+                    </div>
                 </div>
             </div>
         }
@@ -54,8 +57,9 @@
     }
 </div>
 
-<div class="container">
+<div class="container align-content-center">
     @{
-        await Html.RenderPartialAsync("PageNavigation",@Model.Categories);
+        await Html.RenderPartialAsync("PageNavigation",Model.Categories);
     }
 </div>
+

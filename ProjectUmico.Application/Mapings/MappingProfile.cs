@@ -20,7 +20,9 @@ public class MappingProfile : Profile
                 dest.CategoryParentName,opt=>
                 opt.MapFrom(orig=>orig.Parent.Name));
         
-        CreateMap<CategoryDto,Category>();
+        CreateMap<CategoryDto,Category>()
+            .ForPath(dest=> dest.Parent.Name,
+                opt=>opt.MapFrom(orig=>orig.CategoryParentName));
 
         
 

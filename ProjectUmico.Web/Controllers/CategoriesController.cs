@@ -1,22 +1,66 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using ProjectUmico.Application.Categories.Commands;
 using ProjectUmico.Application.Categories.Queries;
 using ProjectUmico.Application.Common.Exceptions;
+using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
 using ProjectUmico.Web.Models;
+using ProjectUmico.Web.ViewModels.Categories;
 
 namespace ProjectUmico.Web.Controllers;
 
 public class CategoriesController : Controller
 {
     private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
 
-    public CategoriesController(IMediator mediator)
+    public CategoriesController(IMediator mediator,IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        CategoryDto model;
+        try
+        {
+            model = await _mediator.Send(new GetCategoryByIdQuery(id));
+        }
+        catch (NotFoundException e)
+        {
+            ViewData["ErrorDescription"] = e.Message;
+            return View("Error");
+        }
+        
+        return View("EditCategory",model);
+    }
+    [HttpPost]
+    public async Task<IActionResult> Edit(CategoryDto model)
+    {
+        Result result;
+        try
+        {
+            result = await _mediator.Send(new UpdateCategoryCommand(model));
+        }
+        catch (Exception e)
+        {
+            ViewData["ErrorDescription"] = e.Message;
+            return View("Error");
+        }
+
+        if (!result.Succeded)
+        {
+            ViewData["ErrorDescription"] = "Failed";
+            return View("Error");
+        }
+        
+        return View("EditCategory",model);
     }
 
     public async Task<IActionResult> Index(int page)
