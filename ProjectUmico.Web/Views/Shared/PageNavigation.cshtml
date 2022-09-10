@@ -1,0 +1,31 @@
+﻿@using ProjectUmico.Web.Helpers
+@model ProjectUmico.Application.Common.Interfaces.IPageNavigationViewModel
+
+@{
+    int CurrentPage = Model.PageNumber;
+    int PageSize = Model.PageSize;
+    int TotalPages = Model.TotalPages;
+
+    bool HasPrev = Model.HasPreviousPage;
+    bool HasNext = Model.HasNextPage;
+    
+    List<int> pages = PaginationHelper.GivePagesArray(CurrentPage, PageSize, TotalPages).ToList();
+}
+
+<nav aria-label="...">
+    <ul class="pagination">
+
+        <li class="page-item @(HasPrev ? string.Empty : "disabled")">
+            <a asp-action="Index" asp-route-page="@(CurrentPage - 1)" class="page-link" tabindex="-1">Previous</a>
+        </li>
+        @foreach (var i in pages)
+        {
+            <li class="page-item @(i == CurrentPage ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(HasNext ? string.Empty : "disabled") ">
+            <a class="page-link" asp-action="Index" asp-route-page="@(CurrentPage + 1)">Next</a>
+        </li>
+    </ul>
+</nav>

@@ -52,6 +52,10 @@
     {
         <p class="text-danger">No Categories</p>
     }
+</div>
 
-
+<div class="container">
+    @{
+        await Html.RenderPartialAsync("PageNavigation",@Model.Categories);
+    }
 </div>

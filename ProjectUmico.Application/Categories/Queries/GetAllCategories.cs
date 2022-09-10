@@ -27,8 +27,8 @@ public class GetAllCategories : IRequest<PaginatedList<CategoryDto>>
         {
             _pageSize = value switch
             {
-                > 50 => 50,
-                <= 0 => 10,
+                > 50 => PaginatedListExtensions.MaxPageSize,
+                <= 0 => PaginatedListExtensions.MinPageSize,
                 _ => value
             };
         }

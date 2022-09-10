@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using ProjectUmico.Application.Common.Interfaces;
 
 namespace ProjectUmico.Application.Common;
 
-public class PaginatedList<T>
+public class PaginatedList<T> : IPageNavigationViewModel
 {
     private int _pageSize;
     private int _pageNumber;
@@ -22,15 +23,15 @@ public class PaginatedList<T>
         {
             _pageSize = value switch
             {
-                > 50 => 50,
-                <= 0 => 1,
+                > 50 => PaginatedListExtensions.MaxPageSize,
+                <= 0 => PaginatedListExtensions.MinPageSize,
                 _ => value
             };
         }
     }
 
     public int TotalPages { get; set; }
-    public int TotalCount { get; set; }
+    public int TotalCount { get; set; } // total count of items 
 
     public List<T> Items { get; set; }
 
@@ -43,7 +44,7 @@ public class PaginatedList<T>
         TotalCount = totalCount;
         PageNumber = pageNumber;
         PageSize = pageSize;
-        TotalPages = (int) Math.Ceiling((double) (TotalCount / PageSize));
+        TotalPages = (int) Math.Ceiling((TotalCount / (double)PageSize));
     }
 
     public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int page, int pagesize)
@@ -58,6 +59,9 @@ public class PaginatedList<T>
 
 public static class PaginatedListExtensions
 {
+    public static readonly int MinPageSize = 10;
+    public static readonly int MaxPageSize = 50;
+    
     public static Task<PaginatedList<T>> ToPaginatedListAsync<T>(this IQueryable<T> source, int pageSize,
         int pageNumber) where T : class
     {
