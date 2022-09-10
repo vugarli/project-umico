@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Infrastructure.Identity;
+using ProjectUmico.Infrastructure.Persistance.Interceptors;
 using umico.Models;
 using umico.Models.Categories;
 using umico.Models.Order;
@@ -15,9 +16,12 @@ namespace ProjectUmico.Infrastructure.Persistance;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
 {
     private readonly IConfiguration _configuration;
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IConfiguration configuration):base(options)
+    private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IConfiguration configuration, AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor):base(options)
     {
         _configuration = configuration;
+        _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
     }
 
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -26,6 +30,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     //     base.OnConfiguring(optionsBuilder);
     // }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

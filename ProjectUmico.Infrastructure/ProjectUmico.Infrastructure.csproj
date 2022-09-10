@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <Folder Include="Persistance\Configurations" />
-    <Folder Include="Persistance\Interceptors" />
   </ItemGroup>
 
   <ItemGroup>

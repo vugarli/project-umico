@@ -5,7 +5,7 @@ using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
-using umico.Models.Categories;
+
 
 namespace ProjectUmico.Application.Categories.Commands;
 

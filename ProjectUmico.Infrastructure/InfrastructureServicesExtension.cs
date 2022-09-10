@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Infrastructure.Persistance;
+using ProjectUmico.Infrastructure.Persistance.Interceptors;
 
 namespace ProjectUmico.Infrastructure;
 
@@ -12,7 +13,8 @@ public static class InfrastructureServicesExtension
     {
         
         // register app interfaces
-
+        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
+        
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseSqlServer(Configuration["DbConnect"]);
