@@ -7,6 +7,7 @@ using ProjectUmico.Application.Categories.Queries;
 using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
+using ProjectUmico.Application.Contracts;
 using ProjectUmico.Application.Dtos;
 using ProjectUmico.Web.Models;
 using ProjectUmico.Web.ViewModels.Categories;
@@ -63,9 +64,9 @@ public class CategoriesController : Controller
         return View("EditCategory",model);
     }
 
-    public async Task<IActionResult> Index(int page)
+    public async Task<IActionResult> Index([FromQuery] PaginationQuery query)
     {
-        var categories = await _mediator.Send(new GetAllCategories(page,10));
+        var categories = await _mediator.Send(new GetAllCategories(query));
         
         var model = new CategoriesViewModel()
         {

@@ -1,4 +1,5 @@
 ﻿@using ProjectUmico.Web.Helpers
+@using ProjectUmico.Application.Contracts
 @model ProjectUmico.Application.Common.Interfaces.IPageNavigationViewModel
 
 @{
@@ -8,7 +9,7 @@
 
     bool HasPrev = Model.HasPreviousPage;
     bool HasNext = Model.HasNextPage;
-    
+
     List<int> pages = PaginationHelper.GivePagesArray(CurrentPage, PageSize, TotalPages).ToList();
 }
 
@@ -16,16 +17,35 @@
     <ul class="pagination">
 
         <li class="page-item @(HasPrev ? string.Empty : "disabled")">
-            <a asp-action="Index" asp-route-page="@(CurrentPage - 1)" class="page-link" tabindex="-1">Previous</a>
+            @Html.ActionLink("Previous", "Index", "Categories",
+                new Dictionary<string, string>()
+                {
+                    {nameof(PaginationQuery.PageNumber), Convert.ToString(CurrentPage - 1)}
+                }
+                , htmlAttributes: new {@class = "page-link"})
+            @* <a asp-action="Index" asp-route-page="@(CurrentPage - 1)" class="page-link" tabindex="-1">Previous</a> *@
         </li>
         @foreach (var i in pages)
         {
             <li class="page-item @(i == CurrentPage ? "active" : "")">
-                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                @Html.ActionLink(Convert.ToString(i), "Index", "Categories",
+                    new Dictionary<string, string>()
+                    {
+                        {nameof(PaginationQuery.PageNumber), Convert.ToString(i)}
+                    }
+                    , htmlAttributes: new {@class = "page-link"})
+                @* <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a> *@
             </li>
         }
         <li class="page-item @(HasNext ? string.Empty : "disabled") ">
-            <a class="page-link" asp-action="Index" asp-route-page="@(CurrentPage + 1)">Next</a>
+            @Html.ActionLink("Next", "Index", "Categories",
+                new Dictionary<string, string>()
+                {
+                    {nameof(PaginationQuery.PageNumber), Convert.ToString(CurrentPage + 1)}
+                }
+                , htmlAttributes: new {@class = "page-link"})
+
+            @* <a class="page-link" asp-action="Index" asp-route-page="@(CurrentPage + 1)">Next</a> *@
         </li>
     </ul>
 </nav>

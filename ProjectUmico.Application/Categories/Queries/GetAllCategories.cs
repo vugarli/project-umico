@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectUmico.Application.Common;
 using ProjectUmico.Application.Common.Interfaces;
+using ProjectUmico.Application.Contracts;
 using ProjectUmico.Application.Dtos;
 using umico.Models.Categories;
 
@@ -11,33 +12,11 @@ namespace ProjectUmico.Application.Categories.Queries;
 
 public class GetAllCategories : IRequest<PaginatedList<CategoryDto>>
 {
-    private int _pageSize;
-    private int _pageNumber;
+    public readonly PaginationQuery Query;
 
-    public int PageNumber
+    public GetAllCategories(PaginationQuery query)
     {
-        get => _pageNumber;
-        set => _pageNumber = value <= 0 ? 1 : value;
-    }
-
-    public int PageSize
-    {
-        get => _pageSize;
-        set
-        {
-            _pageSize = value switch
-            {
-                > 50 => PaginatedListExtensions.MaxPageSize,
-                <= 0 => PaginatedListExtensions.MinPageSize,
-                _ => value
-            };
-        }
-    }
-
-    public GetAllCategories(int pageNumber,int pageSize)
-    {
-        PageNumber = pageNumber;
-        PageSize = pageSize;
+        Query = query;
     }
 }
 
@@ -56,7 +35,7 @@ public class GetAllCategoriesHandler : IRequestHandler<GetAllCategories,Paginate
     {
         var categories = await _context.Categories.Include(c => c.Parent)
             .ProjectTo<CategoryDto>(_mapper.ConfigurationProvider)
-            .ToPaginatedListAsync(request.PageSize,request.PageNumber);
+            .ToPaginatedListAsync(request.Query.PageSize,request.Query.PageNumber);
 
         return categories;
     }
