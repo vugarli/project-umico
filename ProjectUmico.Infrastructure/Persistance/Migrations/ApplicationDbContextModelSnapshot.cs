@@ -252,15 +252,15 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
 
             modelBuilder.Entity("ProductPromotion", b =>
                 {
-                    b.Property<int>("ProductInPromotionsId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductsInPromotionId")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductInPromotionsId", "ProductsInPromotionId");
+                    b.Property<int>("PromotionsForProductId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ProductsInPromotionId");
+                    b.HasKey("ProductsInPromotionId", "PromotionsForProductId");
+
+                    b.HasIndex("PromotionsForProductId");
 
                     b.ToTable("ProductPromotion");
                 });
@@ -740,15 +740,15 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
 
             modelBuilder.Entity("ProductPromotion", b =>
                 {
-                    b.HasOne("umico.Models.Promotion", null)
-                        .WithMany()
-                        .HasForeignKey("ProductInPromotionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("umico.Models.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductsInPromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("umico.Models.Promotion", null)
+                        .WithMany()
+                        .HasForeignKey("PromotionsForProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

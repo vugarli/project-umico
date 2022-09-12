@@ -64,6 +64,7 @@ public class CategoriesController : Controller
         return View("EditCategory",model);
     }
 
+    
     public async Task<IActionResult> Index([FromQuery] PaginationQuery query)
     {
         var categories = await _mediator.Send(new GetAllCategories(query));

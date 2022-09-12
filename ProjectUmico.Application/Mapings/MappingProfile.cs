@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using ProjectUmico.Application.Common;
 using ProjectUmico.Application.Dtos;
+using umico.Models;
 using umico.Models.Categories;
+using umico.Models.Rating;
 
 namespace ProjectUmico.Application.Mapings;
 
@@ -24,7 +26,15 @@ public class MappingProfile : Profile
             .ForPath(dest=> dest.Parent.Name,
                 opt=>opt.MapFrom(orig=>orig.CategoryParentName));
 
+        CreateMap<ProductRating, ProductRatingDto>();
+        CreateMap<Promotion,PromotionDto>();
+        CreateMap<ProductAtribute,ProductAtributeDto>();
         
+        //CreateMap<CompanyProductSaleEntry, CompanyProductSaleEntryDto>();
+        
+        CreateMap<ProductDto,Product>();
+        CreateMap<Product,ProductDto>();
+
 
     }
 }

@@ -5,7 +5,6 @@ namespace umico.Models;
 
 public class CompanyProductSaleEntry : BaseAuditableEntity
 {
-
     public Company Company { get; set; }
     public string CompanyId { get; set; }
     

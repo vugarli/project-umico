@@ -19,7 +19,7 @@ public class Product : BaseAuditableEntity
     public ICollection<CompanyProductSaleEntry> SaleEntriesList { get; set; } // Satis
     //public List<CompanyProductPromotionSaleEntries> PromotionSaleEntriesList { get; set; } // Satis aksiya
     
-    public List<Promotion> ProductInPromotions { get; set; }
+    public List<Promotion> PromotionsForProduct { get; set; }
     
     public List<ProductAtribute> Atributes { get; set; }
 

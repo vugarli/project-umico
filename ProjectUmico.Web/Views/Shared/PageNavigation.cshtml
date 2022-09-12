@@ -10,6 +10,9 @@
     bool HasPrev = Model.HasPreviousPage;
     bool HasNext = Model.HasNextPage;
 
+    var ControllerName = Context.GetRouteData().Values["controller"]?.ToString();
+    var ActionName = Context.GetRouteData().Values["action"]?.ToString();
+    
     List<int> pages = PaginationHelper.GivePagesArray(CurrentPage, PageSize, TotalPages).ToList();
 }
 
@@ -17,7 +20,7 @@
     <ul class="pagination">
 
         <li class="page-item @(HasPrev ? string.Empty : "disabled")">
-            @Html.ActionLink("Previous", "Index", "Categories",
+            @Html.ActionLink("Previous", ActionName, ControllerName,
                 new Dictionary<string, string>()
                 {
                     {nameof(PaginationQuery.PageNumber), Convert.ToString(CurrentPage - 1)}
@@ -28,7 +31,7 @@
         @foreach (var i in pages)
         {
             <li class="page-item @(i == CurrentPage ? "active" : "")">
-                @Html.ActionLink(Convert.ToString(i), "Index", "Categories",
+                @Html.ActionLink(Convert.ToString(i), ActionName, ControllerName,
                     new Dictionary<string, string>()
                     {
                         {nameof(PaginationQuery.PageNumber), Convert.ToString(i)}
@@ -38,7 +41,7 @@
             </li>
         }
         <li class="page-item @(HasNext ? string.Empty : "disabled") ">
-            @Html.ActionLink("Next", "Index", "Categories",
+            @Html.ActionLink("Next", ActionName, ControllerName,
                 new Dictionary<string, string>()
                 {
                     {nameof(PaginationQuery.PageNumber), Convert.ToString(CurrentPage + 1)}

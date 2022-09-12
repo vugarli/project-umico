@@ -27,8 +27,9 @@ public class PaginationQuery
             };
         }
     }
-
-    public PaginationQuery(int pageNumber,int pageSize)
+    
+    
+    public PaginationQuery(int pageNumber,int pageSize,string actionName,string controllerName)
     {
         PageNumber = pageNumber;
         PageSize = pageSize;
