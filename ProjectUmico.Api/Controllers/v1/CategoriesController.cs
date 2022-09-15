@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ProjectUmico.Application.Categories.Commands;
 using ProjectUmico.Application.Categories.Queries;
+using ProjectUmico.Application.Categories.v1.Commands;
 using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Contracts;
@@ -48,16 +49,16 @@ public class CategoriesController : ApiControllerBasev1
     }
     
     [HttpPut]
-    public async Task<IActionResult> Edit(CategoryDto model)
+    public async Task<IActionResult> Edit(UpdateCategoryCommandV1.UpdateCategoryCommand command)
     {
         Result<CategoryDto> result;
         try
         {
-            result = await _mediator.Send(new UpdateCategoryCommand(model));
+            result = await _mediator.Send(command);
         }
-        catch (Exception e)
+        catch (NotFoundException e)
         {
-            return BadRequest();
+            return NotFound(e.Message);
         }
 
         if (!result.Succeded)
@@ -70,17 +71,21 @@ public class CategoriesController : ApiControllerBasev1
 
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(DeleteCategoryCommandV1.DeleteCategoryCommand command)
     {
         Result<CategoryDto> result;
         try
         {
-            result = await _mediator.Send(new DeleteCategoryCommand(id));
+            result = await _mediator.Send(command);
         }
         catch (NotAllowedException e)
         {
+            return BadRequest(e.Message);
+        }
+        catch (NotFoundException e)
+        {
 
-            return BadRequest();
+            return NotFound(e.Message);
         }
 
         if (!result.Succeded)
@@ -92,16 +97,16 @@ public class CategoriesController : ApiControllerBasev1
     }
     
     [HttpPost]
-    public async Task<IActionResult> Add(CategoryDto dto)
+    public async Task<IActionResult> Add(AddCategoryCommandV1.AddCategoryCommand command)
     {
         Result<CategoryDto> result;
         try
         {
-            result = await _mediator.Send(new AddCategoryCommand(dto));
+            result = await _mediator.Send(command);
         }
         catch (NotFoundException e)
         {
-            return NotFound();
+            return NotFound(e.Message);
         }
 
         if (!result.Succeded)

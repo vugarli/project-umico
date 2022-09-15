@@ -49,7 +49,7 @@ public class ProductsController : ApiControllerBasev1
     }
     
     [HttpPut]
-    public async Task<IActionResult> Edit(EditProductCommandV1.EditProductCommand command)
+    public async Task<IActionResult> Edit(UpdateProductCommandV1.UpdateProductCommand command)
     {
         Result<ProductDto> result;
 

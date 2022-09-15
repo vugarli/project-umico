@@ -9,9 +9,9 @@ using umico.Models;
 
 namespace ProjectUmico.Application.Products.v1.Commands;
 
-public static  class EditProductCommandV1
+public static  class UpdateProductCommandV1
 {
-    public record EditProductCommand : IRequest<Result<ProductDto>>
+    public record UpdateProductCommand : IRequest<Result<ProductDto>>
     {
         public int Id { get; set; }
         public string Sku { get; set; } = default!;
@@ -24,7 +24,7 @@ public static  class EditProductCommandV1
         public int CategoryId { get; set; }
     }
     
-    public class AddProductCommandHandler : IRequestHandler<EditProductCommand,Result<ProductDto>>
+    public class AddProductCommandHandler : IRequestHandler<UpdateProductCommand,Result<ProductDto>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -35,7 +35,7 @@ public static  class EditProductCommandV1
             _mapper = mapper;
         }
         
-        public async Task<Result<ProductDto>> Handle(EditProductCommand request, CancellationToken cancellationToken)
+        public async Task<Result<ProductDto>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             var oldProduct = await _dbContext.Products.SingleOrDefaultAsync(p=>p.Id == request.Id);
 
@@ -46,6 +46,11 @@ public static  class EditProductCommandV1
             // TODO update this part with mapper
             oldProduct.Name = request.Name;
             oldProduct.SKU = request.Sku;
+            
+            if (request.CategoryId != default)
+            {
+                oldProduct.CategoryId = request.CategoryId;
+            }
 
             var result = await _dbContext.SaveChangesAsync(cancellationToken);
         

@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Common\Behaviours" />
-    <Folder Include="Products\v1" />
   </ItemGroup>
 
   <ItemGroup>
