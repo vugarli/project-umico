@@ -80,7 +80,7 @@ public class AttributesController : ApiControllerBasev1
         {
             result = await _mediator.Send(command);
         }
-        catch (DbUpdateException e)
+        catch (Exception e)
         {
             return BadRequest();
         }

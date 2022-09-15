@@ -5,6 +5,7 @@ using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
+using ProjectUmico.Domain.Exceptions;
 using ProjectUmico.Domain.Models.Attributes;
 using umico.Models;
 using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
@@ -35,7 +36,7 @@ public static class AddAttributeCommandV1
         {
             if (request.AttributeType is AttributeType.AttributeGroup && request.ParentAttributeId != null)
             {
-                throw new Exception(); // TODO group attribute can't have parent
+                throw new AttributeExceptions.GroupAttributeCantHaveParentException();
             }
 
             if (request.AttributeType is AttributeType.Attribute && request.ParentAttributeId != null)
@@ -51,27 +52,19 @@ public static class AddAttributeCommandV1
 
                 if (parentAttribute.AttributeType is AttributeType.Attribute)
                 {
-                    throw new Exception();// TODO new domain exception attribute can't have attribute parent
+                    throw new AttributeExceptions.AttributeCantHaveAttributeParentException();
                 }
             }
             else if(request.AttributeType is AttributeType.Attribute)
             {
-                throw new Exception(); // TODO new domain exception attribute must have parent
+                throw new AttributeExceptions.AttributeMustHaveParentException(); 
             }
             
             var attribute = _mapper.Map<Attribute>(request);
             _dbContext.Attributes.Add(attribute);
 
-            int result;
-
-            try
-            {
-                result = await _dbContext.SaveChangesAsync(cancellationToken);
-            }
-            catch (DbUpdateException e)
-            {
-                throw new Exception(); //TODO
-            }
+            int result = await _dbContext.SaveChangesAsync(cancellationToken);
+            
 
             if (result > 0)
             {
