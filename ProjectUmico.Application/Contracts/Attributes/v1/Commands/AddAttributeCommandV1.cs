@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
@@ -18,25 +19,46 @@ public static class AddAttributeCommandV1
         public AttributeType AttributeType { get; set; }
         public int? ParentAttributeId { get; set; } = default;
     }
-    
-    public class AddAttributeCommandHandler : IRequestHandler<AddAttributeCommand,Result<AttributeDto>>
+
+    public class AddAttributeCommandHandler : IRequestHandler<AddAttributeCommand, Result<AttributeDto>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public AddAttributeCommandHandler(IApplicationDbContext dbContext,IMapper mapper)
+        public AddAttributeCommandHandler(IApplicationDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        
+
         public async Task<Result<AttributeDto>> Handle(AddAttributeCommand request, CancellationToken cancellationToken)
         {
-            if (request.AttributeType is AttributeType.AttributeGroup && request.ParentAttributeId is null)
+            if (request.AttributeType is AttributeType.AttributeGroup && request.ParentAttributeId != null)
             {
-                throw new Exception(); // TODO
+                throw new Exception(); // TODO group attribute can't have parent
             }
 
+            if (request.AttributeType is AttributeType.Attribute && request.ParentAttributeId != null)
+            {
+                var parentAttribute =
+                    await _dbContext.Attributes.SingleOrDefaultAsync(a => a.Id == request.ParentAttributeId,
+                        cancellationToken);
+
+                if (parentAttribute is null)
+                {
+                    throw new NotFoundException(nameof(Attribute), nameof(Attribute.Id), request.ParentAttributeId);
+                }
+
+                if (parentAttribute.AttributeType is AttributeType.Attribute)
+                {
+                    throw new Exception();// TODO new domain exception attribute can't have attribute parent
+                }
+            }
+            else if(request.AttributeType is AttributeType.Attribute)
+            {
+                throw new Exception(); // TODO new domain exception attribute must have parent
+            }
+            
             var attribute = _mapper.Map<Attribute>(request);
             _dbContext.Attributes.Add(attribute);
 
@@ -50,15 +72,13 @@ public static class AddAttributeCommandV1
             {
                 throw new Exception(); //TODO
             }
-            
+
             if (result > 0)
             {
                 var attributeDto = _mapper.Map<AttributeDto>(attribute);
                 return Result<AttributeDto>.Success(attributeDto);
             }
             else return Result<AttributeDto>.Failure();
-            
         }
     }
-    
 }

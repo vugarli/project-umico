@@ -71,6 +71,27 @@ public class AttributesController : ApiControllerBasev1
         return Created(url,result.Value);
     }    
     
+    [HttpPut]
+    public async Task<IActionResult> AddAttribute([FromBody]UpdateAttributeCommandV1.UpdateAttributeCommand command)
+    {
+        Result<AttributeDto> result;
+
+        try
+        {
+            result = await _mediator.Send(command);
+        }
+        catch (DbUpdateException e)
+        {
+            return BadRequest();
+        }
+        
+        if (!result.Succeded)
+        {
+            return BadRequest();
+        }
+        return Ok(result.Value);
+    }    
+    
     [HttpDelete]
     public async Task<IActionResult> AddAttribute(int id)
     {
