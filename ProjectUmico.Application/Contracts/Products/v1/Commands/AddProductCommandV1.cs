@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
+using ProjectUmico.Domain.Models.Attributes;
 using umico.Models;
+using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
 
 namespace ProjectUmico.Application.Products.Commands;
 
@@ -40,10 +42,10 @@ public static class AddProductCommandV1
 
             if (request.AttributeIds != null && request.AttributeIds.Any() )
             {
-                var attributes = new List<ProductAtribute>();
+                var attributes = new List<Attribute>();
                 foreach (var id in request.AttributeIds)
                 {
-                    var attribute = new ProductAtribute() {Id = id};
+                    var attribute = new Attribute() {Id = id};
                     attributes.Add(attribute);
                 }
                 newProduct.Atributes = attributes;

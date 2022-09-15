@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using ProjectUmico.Application.Common;
+using ProjectUmico.Application.Contracts.Attributes.v1.Commands;
 using ProjectUmico.Application.Dtos;
 using ProjectUmico.Application.Products.Commands;
+using ProjectUmico.Domain.Models.Attributes;
 using umico.Models;
 using umico.Models.Categories;
 using umico.Models.Rating;
+using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
 
 namespace ProjectUmico.Application.Mapings;
 
@@ -32,8 +35,8 @@ public class MappingProfile : Profile
 
         CreateMap<ProductRating, ProductRatingDto>();
         CreateMap<Promotion,PromotionDto>();
-        CreateMap<ProductAtribute,ProductAtributeDto>();
-        
+        CreateMap<Attribute,AttributeDto>();
+        CreateMap<AddAttributeCommandV1.AddAttributeCommand,Attribute>();
         //CreateMap<CompanyProductSaleEntry, CompanyProductSaleEntryDto>();
         // CreateMap<ProductDto,Product>().ForPath(dest=>dest.CategoryId,opt=>opt.MapFrom(p=>p.CategoryId));
 

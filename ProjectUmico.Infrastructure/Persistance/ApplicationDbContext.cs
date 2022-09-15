@@ -1,14 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ProjectUmico.Application.Common.Interfaces;
+using ProjectUmico.Domain.Models.Attributes;
 using ProjectUmico.Infrastructure.Identity;
 using ProjectUmico.Infrastructure.Persistance.Interceptors;
 using umico.Models;
 using umico.Models.Categories;
 using umico.Models.Order;
 using umico.Models.Rating;
+using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
+
 // using umico.Models.UserPersistance;
 
 namespace ProjectUmico.Infrastructure.Persistance;
@@ -123,18 +127,22 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             .OnDelete(DeleteBehavior.NoAction);
         // Attribute
 
-        modelBuilder.Entity<ProductAtribute>()
-            .HasOne<ProductAtribute>(a => a.ParentAttribute)
-            .WithMany(a => a.Children)
-            .HasForeignKey(a => a.ParentAttributeId);
-        
-        
+        modelBuilder.Entity<Attribute>()
+            .HasOne<Attribute>(a => a.ParentAttribute)
+            .WithMany(m => m.Children) //TODO .WithMany<Attribute>(m => m.Children) gives error. Find out why 
+            .HasForeignKey(e => e.ParentAttributeId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+
         // Case OrderDetails
         modelBuilder.Entity<Order>()
             .HasMany<Case>(o => o.Cases)
             .WithOne(o => o.Order)
             .HasForeignKey(o => o.OrderId)
             .HasPrincipalKey(o => o.Id);
+        
+        
+  
 
         // modelBuilder.Entity<ApplicationUser>()
         //     .HasOne<UserPersistance>(o => o.UserPersistance)
@@ -153,8 +161,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     // Product Related
     public DbSet<RatingBase> Ratings { get; set; }
+    public DbSet<Attribute> Attributes { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<ProductAtribute> ProductAtributes { get; set; }
+    public DbSet<Attribute> ProductAtributes { get; set; }
     public DbSet<CompanyProductSaleEntry> CompanyProductSaleEntries { get; set; }
 }

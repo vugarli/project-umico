@@ -12,7 +12,7 @@ using ProjectUmico.Infrastructure.Persistance;
 namespace ProjectUmico.Infrastructure.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220915054429_Initial")]
+    [Migration("20220915160326_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,6 +102,21 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasDiscriminator<string>("UserType").HasValue("User");
+                });
+
+            modelBuilder.Entity("AttributeProduct", b =>
+                {
+                    b.Property<int>("AtributesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AtributesId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("AttributeProduct");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -237,21 +252,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProductProductAtribute", b =>
-                {
-                    b.Property<int>("AtributesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AtributesId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("ProductProductAtribute");
-                });
-
             modelBuilder.Entity("ProductPromotion", b =>
                 {
                     b.Property<int>("ProductsInPromotionId")
@@ -265,6 +265,43 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.HasIndex("PromotionsForProductId");
 
                     b.ToTable("ProductPromotion");
+                });
+
+            modelBuilder.Entity("ProjectUmico.Domain.Models.Attributes.Attribute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AttributeType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ParentAttributeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentAttributeId");
+
+                    b.ToTable("Attribute");
                 });
 
             modelBuilder.Entity("umico.Models.Categories.Category", b =>
@@ -516,40 +553,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("umico.Models.ProductAtribute", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ParentAttributeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentAttributeId");
-
-                    b.ToTable("ProductAtributes");
-                });
-
             modelBuilder.Entity("umico.Models.Promotion", b =>
                 {
                     b.Property<int>("Id")
@@ -674,6 +677,21 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.HasDiscriminator().HasValue("ProductRating");
                 });
 
+            modelBuilder.Entity("AttributeProduct", b =>
+                {
+                    b.HasOne("ProjectUmico.Domain.Models.Attributes.Attribute", null)
+                        .WithMany()
+                        .HasForeignKey("AtributesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("umico.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -725,21 +743,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProductProductAtribute", b =>
-                {
-                    b.HasOne("umico.Models.ProductAtribute", null)
-                        .WithMany()
-                        .HasForeignKey("AtributesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("umico.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ProductPromotion", b =>
                 {
                     b.HasOne("umico.Models.Product", null)
@@ -753,6 +756,16 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         .HasForeignKey("PromotionsForProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ProjectUmico.Domain.Models.Attributes.Attribute", b =>
+                {
+                    b.HasOne("ProjectUmico.Domain.Models.Attributes.Attribute", "ParentAttribute")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentAttributeId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("ParentAttribute");
                 });
 
             modelBuilder.Entity("umico.Models.Categories.Category", b =>
@@ -843,15 +856,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("umico.Models.ProductAtribute", b =>
-                {
-                    b.HasOne("umico.Models.ProductAtribute", "ParentAttribute")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentAttributeId");
-
-                    b.Navigation("ParentAttribute");
-                });
-
             modelBuilder.Entity("umico.Models.Rating.RatingBase", b =>
                 {
                     b.HasOne("ApplicationUser", "RatedUser")
@@ -889,6 +893,11 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.Navigation("Ratings");
                 });
 
+            modelBuilder.Entity("ProjectUmico.Domain.Models.Attributes.Attribute", b =>
+                {
+                    b.Navigation("Children");
+                });
+
             modelBuilder.Entity("umico.Models.Categories.Category", b =>
                 {
                     b.Navigation("Children");
@@ -904,11 +913,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.Navigation("ProductRatings");
 
                     b.Navigation("SaleEntriesList");
-                });
-
-            modelBuilder.Entity("umico.Models.ProductAtribute", b =>
-                {
-                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("umico.Models.Company", b =>

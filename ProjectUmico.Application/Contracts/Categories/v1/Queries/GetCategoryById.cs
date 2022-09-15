@@ -31,7 +31,8 @@ public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery,
     
     public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        var category =await _dbContext.Categories.Include(c=>c.Parent).SingleOrDefaultAsync(c => c.Id == request.Id,cancellationToken);
+        var category =await _dbContext.Categories.Include(c=>c.Parent)
+            .SingleOrDefaultAsync(c => c.Id == request.Id,cancellationToken);
 
         if (category is null)
         {

@@ -19,7 +19,7 @@ public class ProductDto
     
    // public List<PromotionDto>? PromotionsForProduct { get; set; }
     
-    public List<ProductAtributeDto>? Atributes { get; set; }
+    public List<AttributeDto>? Atributes { get; set; }
     
     public int CategoryId { get; set; }
     public string? CategoryName { get; set; }

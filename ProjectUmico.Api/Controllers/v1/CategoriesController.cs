@@ -14,12 +14,10 @@ namespace ProjectUmico.Api.Controllers.v1;
 public class CategoriesController : ApiControllerBasev1
 {
     private readonly IMediator _mediator;
-    private readonly IMapper _mapper;
 
-    public CategoriesController(IMediator mediator,IMapper mapper)
+    public CategoriesController(IMediator mediator)
     {
         _mediator = mediator;
-        _mapper = mapper;
     }
 
     [HttpGet]

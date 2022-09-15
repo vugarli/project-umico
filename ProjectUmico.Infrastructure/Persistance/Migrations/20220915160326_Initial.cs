@@ -54,6 +54,30 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Attribute",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AttributeType = table.Column<int>(type: "int", nullable: false),
+                    ParentAttributeId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attribute", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attribute_Attribute_ParentAttributeId",
+                        column: x => x.ParentAttributeId,
+                        principalTable: "Attribute",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -73,29 +97,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         name: "FK_Categories_Categories_ParentId",
                         column: x => x.ParentId,
                         principalTable: "Categories",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProductAtributes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ParentAttributeId = table.Column<int>(type: "int", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductAtributes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProductAtributes_ProductAtributes_ParentAttributeId",
-                        column: x => x.ParentAttributeId,
-                        principalTable: "ProductAtributes",
                         principalColumn: "Id");
                 });
 
@@ -255,6 +256,30 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AttributeProduct",
+                columns: table => new
+                {
+                    AtributesId = table.Column<int>(type: "int", nullable: false),
+                    ProductsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AttributeProduct", x => new { x.AtributesId, x.ProductsId });
+                    table.ForeignKey(
+                        name: "FK_AttributeProduct_Attribute_AtributesId",
+                        column: x => x.AtributesId,
+                        principalTable: "Attribute",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AttributeProduct_Products_ProductsId",
+                        column: x => x.ProductsId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CompanyProductSaleEntries",
                 columns: table => new
                 {
@@ -290,30 +315,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         column: x => x.PromotionId,
                         principalTable: "Promotion",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProductProductAtribute",
-                columns: table => new
-                {
-                    AtributesId = table.Column<int>(type: "int", nullable: false),
-                    ProductsId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductProductAtribute", x => new { x.AtributesId, x.ProductsId });
-                    table.ForeignKey(
-                        name: "FK_ProductProductAtribute_ProductAtributes_AtributesId",
-                        column: x => x.AtributesId,
-                        principalTable: "ProductAtributes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductProductAtribute_Products_ProductsId",
-                        column: x => x.ProductsId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -496,6 +497,16 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Attribute_ParentAttributeId",
+                table: "Attribute",
+                column: "ParentAttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AttributeProduct_ProductsId",
+                table: "AttributeProduct",
+                column: "ProductsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Cases_CompanyId",
                 table: "Cases",
                 column: "CompanyId");
@@ -541,16 +552,6 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductAtributes_ParentAttributeId",
-                table: "ProductAtributes",
-                column: "ParentAttributeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductProductAtribute_ProductsId",
-                table: "ProductProductAtribute",
-                column: "ProductsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProductPromotion_PromotionsForProductId",
                 table: "ProductPromotion",
                 column: "PromotionsForProductId");
@@ -594,10 +595,10 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Cases");
+                name: "AttributeProduct");
 
             migrationBuilder.DropTable(
-                name: "ProductProductAtribute");
+                name: "Cases");
 
             migrationBuilder.DropTable(
                 name: "ProductPromotion");
@@ -609,10 +610,10 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Attribute");
 
             migrationBuilder.DropTable(
-                name: "ProductAtributes");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "CompanyProductSaleEntries");
