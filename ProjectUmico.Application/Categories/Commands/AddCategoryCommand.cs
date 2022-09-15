@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectUmico.Application.Common.Exceptions;
@@ -9,7 +10,7 @@ using umico.Models.Categories;
 
 namespace ProjectUmico.Application.Categories.Commands;
 
-public class AddCategoryCommand : IRequest<Result>
+public class AddCategoryCommand : IRequest<Result<CategoryDto>>
 {
     public AddCategoryCommand(CategoryDto categoryDto)
     {
@@ -19,16 +20,18 @@ public class AddCategoryCommand : IRequest<Result>
     public CategoryDto CategoryDto { get; }
 }
 
-public class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand,Result>
+public class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand,Result<CategoryDto>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public AddCategoryCommandHandler(IApplicationDbContext context)
+    public AddCategoryCommandHandler(IApplicationDbContext context,IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
     
-    public async Task<Result> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CategoryDto>> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
     {
         Category? parentCategory = null;
         if (request.CategoryDto.CategoryParentName != null)
@@ -51,6 +54,11 @@ public class AddCategoryCommandHandler : IRequestHandler<AddCategoryCommand,Resu
 
         var result = await _context.SaveChangesAsync(cancellationToken);
         
-        return result > 0 ? Result.Success() : Result.Failure();
+        if (result > 0)
+        {
+            var categoryDto = _mapper.Map<CategoryDto>(category);
+            return Result<CategoryDto>.Success(categoryDto);
+        }
+        else return Result<CategoryDto>.Failure();
     }
 }

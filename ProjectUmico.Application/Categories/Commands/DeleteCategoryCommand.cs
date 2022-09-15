@@ -1,13 +1,15 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
+using ProjectUmico.Application.Dtos;
 using umico.Models.Categories;
 
 namespace ProjectUmico.Application.Categories.Commands;
 
-public class DeleteCategoryCommand : IRequest<Result>
+public class DeleteCategoryCommand : IRequest<Result<CategoryDto>>
 {
     public DeleteCategoryCommand(int id)
     {
@@ -16,16 +18,18 @@ public class DeleteCategoryCommand : IRequest<Result>
     public int Id { get; }
 }
 
-public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand,Result>
+public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand,Result<CategoryDto>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public DeleteCategoryCommandHandler(IApplicationDbContext context)
+    public DeleteCategoryCommandHandler(IApplicationDbContext context,IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
     
-    public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CategoryDto>> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
         var category = _context.Categories.SingleOrDefault(c => c.Id == request.Id);
         if (category is null)
@@ -44,7 +48,12 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
             throw new NotAllowedException("Unable to delete category. Delete child categories first.");
         }
 
-        return result > 0 ? Result.Success() : Result.Failure();
+        if (result > 0)
+        {
+            var categoryDto = _mapper.Map<CategoryDto>(category);
+            return Result<CategoryDto>.Success(categoryDto);
+        }
+        else return Result<CategoryDto>.Failure();
     }
 }
 

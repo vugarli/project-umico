@@ -5,10 +5,10 @@ namespace ProjectUmico.Infrastructure.Identity;
 
 public static class IdentityResultExtensions
 {
-    public static Result ToApplicationResult(this IdentityResult result)
+    public static Result<ApplicationUser> ToApplicationResult(this IdentityResult result)
     {
-        return result.Succeeded ? Result.Success() : 
-            Result.Failure(result.Errors.Select(error => error.Description));
+        return result.Succeeded ? Result<ApplicationUser>.Success() : 
+            Result<ApplicationUser>.Failure(result.Errors.Select(error => error.Description));
         
     }
 }

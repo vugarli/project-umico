@@ -13,7 +13,7 @@ public class IdentityService : IIdentityService
         _userManager = userManager;
     }
     
-    public async Task<(Result result, string UserId)> CreateUser(string email, string password)
+    public async Task<(Result<ApplicationUser> result, string UserId)> CreateUser(string email, string password)
     {
         var appuser = new ApplicationUser()
         {
@@ -26,14 +26,14 @@ public class IdentityService : IIdentityService
         return (result.ToApplicationResult(), appuser.Id);
     }
 
-    public async Task<Result> DeleteUser(string email)
+    public async Task<Result<ApplicationUser>> DeleteUser(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
-        return user != null ? await DeleteUser(user) : Result.Success();
+        return user != null ? await DeleteUser(user) : Result<ApplicationUser>.Success();
     }
     
-    public async Task<Result> DeleteUser(ApplicationUser user)
+    public async Task<Result<ApplicationUser>> DeleteUser(ApplicationUser user)
     {
         var result = await _userManager.DeleteAsync(user);
 

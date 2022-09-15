@@ -13,13 +13,14 @@ public class ProductDto
     public string Description { get; set; }
     public string ThumbnailUrl { get; set; }
     
-    public ICollection<ProductRatingDto>? ProductRatings { get; set; }
+    // public ICollection<ProductRatingDto>? ProductRatings { get; set; }
     
-    public ICollection<CompanyProductSaleEntry> SaleEntriesList { get; set; } // Satis
+   // public ICollection<CompanyProductSaleEntry>? SaleEntriesList { get; set; } // Satis
     
-    public List<PromotionDto>? PromotionsForProduct { get; set; }
+   // public List<PromotionDto>? PromotionsForProduct { get; set; }
     
     public List<ProductAtributeDto>? Atributes { get; set; }
     
-    public CategoryDto Category { get; set; }
+    public int CategoryId { get; set; }
+    public string? CategoryName { get; set; }
 }
