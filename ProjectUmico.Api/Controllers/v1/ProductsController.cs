@@ -7,12 +7,10 @@ using ProjectUmico.Application.Contracts;
 using ProjectUmico.Application.Dtos;
 using ProjectUmico.Application.Products.Commands;
 using ProjectUmico.Application.Products.Queries;
+using ProjectUmico.Application.Products.v1.Commands;
 
 namespace ProjectUmico.Api.Controllers.v1;
 
-// [ApiController]
-// [ApiVersion("1.0")]
-// [Route("api/v{version:apiVersion}/[controller]")]
 public class ProductsController : ApiControllerBasev1
 {
     private readonly IMediator _mediator;
@@ -51,13 +49,13 @@ public class ProductsController : ApiControllerBasev1
     }
     
     [HttpPut]
-    public async Task<IActionResult> Edit(ProductDto productDto)
+    public async Task<IActionResult> Edit(EditProductCommandV1.EditProductCommand command)
     {
         Result<ProductDto> result;
 
         try
         {
-            result = await _mediator.Send(new EditProductCommand(productDto));
+            result = await _mediator.Send(command);
         }
         catch (NotFoundException e)
         {
@@ -94,5 +92,26 @@ public class ProductsController : ApiControllerBasev1
         var uri = Url.Link("GetProductByIdV1",new{ id=result.Value?.Id }) ?? "N/A";
         
         return Created(uri,result.Value);
+    }    
+    [HttpDelete]
+    public async Task<IActionResult> Create(DeleteProductCommandV1.DeleteProductCommand command)
+    {
+        Result<ProductDto> result;
+
+        try
+        {
+            result = await _mediator.Send(command);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound();
+        }
+
+        if (!result.Succeded)
+        {
+            return BadRequest();
+        }
+        
+        return Ok(result.Value);
     }
 }

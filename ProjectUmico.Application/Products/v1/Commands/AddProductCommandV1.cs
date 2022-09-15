@@ -17,8 +17,8 @@ public static class AddProductCommandV1
         public string Description { get; set; } = default!;
         public string? ThumbnailUrl { get; set; }
 
-        public List<int>? Attributes { get; set; } = default;
-
+        public List<int>? AttributeIds { get; set; } = new();
+        
         public int CategoryId { get; set; }
     }
 
@@ -38,10 +38,10 @@ public static class AddProductCommandV1
         
             _mapper.Map(request,newProduct);
 
-            if (request.Attributes != null && request.Attributes.Count() > 0 )
+            if (request.AttributeIds != null && request.AttributeIds.Any() )
             {
                 var attributes = new List<ProductAtribute>();
-                foreach (var id in request.Attributes)
+                foreach (var id in request.AttributeIds)
                 {
                     var attribute = new ProductAtribute() {Id = id};
                     attributes.Add(attribute);
