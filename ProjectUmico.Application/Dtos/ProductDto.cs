@@ -4,7 +4,7 @@ using umico.Models.Rating;
 
 namespace ProjectUmico.Application.Dtos;
 
-public class ProductDto
+public class ProductDto : ICachable
 {
     public int Id { get; set; }
     
@@ -23,4 +23,5 @@ public class ProductDto
     
     public int CategoryId { get; set; }
     public string? CategoryName { get; set; }
+    public DateTime? LastModified { get; set; }
 }

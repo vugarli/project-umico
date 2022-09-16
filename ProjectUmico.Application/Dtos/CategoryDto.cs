@@ -1,6 +1,6 @@
 ﻿namespace ProjectUmico.Application.Dtos;
 
-public class CategoryDto
+public class CategoryDto : ICachable
 {
     public int? CategoryId { get; set; }
     public string CategoryName { get; set; }

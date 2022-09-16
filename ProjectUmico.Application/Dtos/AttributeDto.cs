@@ -2,7 +2,7 @@
 
 namespace ProjectUmico.Application.Dtos;
 
-public class AttributeDto
+public class AttributeDto : ICachable
 {
     public int Id { get; set; }
     
@@ -11,4 +11,5 @@ public class AttributeDto
     public string Value { get; set; }
     
     public int? ParentAttributeId { get; set; }
+    public DateTime? LastModified { get; set; }
 }

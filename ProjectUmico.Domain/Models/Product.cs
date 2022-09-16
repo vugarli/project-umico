@@ -1,5 +1,4 @@
-﻿
-using ProjectUmico.Domain.Common;
+﻿using ProjectUmico.Domain.Common;
 using ProjectUmico.Domain.Models.Attributes;
 using umico.Models.Categories;
 using umico.Models.Rating;
@@ -16,16 +15,15 @@ public class Product : BaseAuditableEntity
 
     // Ratings
     public ICollection<ProductRating>? ProductRatings { get; set; }
-    
+
     // SaleEntries
     public ICollection<CompanyProductSaleEntry> SaleEntriesList { get; set; } // Satis
     //public List<CompanyProductPromotionSaleEntries> PromotionSaleEntriesList { get; set; } // Satis aksiya
-    
+
     public List<Promotion> PromotionsForProduct { get; set; }
-    
+
     public List<Attribute> Atributes { get; set; }
 
-     public Category Category { get; set; }
-     public int CategoryId { get; set; }
-    
+    public Category Category { get; set; }
+    public int CategoryId { get; set; }
 }

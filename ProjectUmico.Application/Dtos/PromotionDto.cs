@@ -2,6 +2,7 @@
 
 public class PromotionDto
 {
+    //TODO : ICachable
     public string PromotionDescription { get; set; }
     public string PromotionName { get; set; }
     

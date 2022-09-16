@@ -6,6 +6,7 @@ using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
 using ProjectUmico.Domain.Models.Attributes;
 using umico.Models;
+using umico.Models.Categories;
 using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
 
 namespace ProjectUmico.Application.Products.Commands;
@@ -40,9 +41,9 @@ public static class AddProductCommandV1
         
             _mapper.Map(request,newProduct);
 
+            var attributes = new List<Attribute>();
             if (request.AttributeIds != null && request.AttributeIds.Any() )
             {
-                var attributes = new List<Attribute>();
                 foreach (var id in request.AttributeIds)
                 {
                     var attribute = new Attribute() {Id = id};
@@ -51,8 +52,15 @@ public static class AddProductCommandV1
                 newProduct.Atributes = attributes;
             }
 
+            var category = new Category()
+            {
+                Id = request.CategoryId
+            };
+            
             _dbContext.Products.Attach(newProduct);
-
+            
+            // TODO fetch product from db to show null fields
+            
             var result= await _dbContext.SaveChangesAsync(cancellationToken);
         
             if (result > 0)
@@ -61,7 +69,6 @@ public static class AddProductCommandV1
                 return Result<ProductDto>.Success(productDto);
             }
             else return Result<ProductDto>.Failure();
-
         }
     }
 }

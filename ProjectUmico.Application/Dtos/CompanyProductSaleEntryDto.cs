@@ -3,7 +3,7 @@ using umico.Models;
 
 namespace ProjectUmico.Application.Dtos;
 
-public class CompanyProductSaleEntryDto
+public class CompanyProductSaleEntryDto : ICachable
 {
     public string CompanyName { get; set; }
     public string CompanyId { get; set; }
@@ -18,5 +18,6 @@ public class CompanyProductSaleEntryDto
 
     public bool IsInPromotion { get; set; }
     public int? PromotionId { get; set; }
-    
+
+    public DateTime? LastModified { get; set; }
 }

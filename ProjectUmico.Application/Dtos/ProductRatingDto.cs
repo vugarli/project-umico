@@ -2,6 +2,7 @@
 
 public class ProductRatingDto
 {
+    //TODO : ICachable
     public string RatedUserEmail { get; set; }
     
     public string Comment { get; set; }

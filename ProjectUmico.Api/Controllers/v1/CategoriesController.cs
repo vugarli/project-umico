@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using ProjectUmico.Application.Categories.Commands;
 using ProjectUmico.Application.Categories.Queries;
 using ProjectUmico.Application.Categories.v1.Commands;
@@ -31,6 +32,7 @@ public class CategoriesController : ApiControllerBasev1
         return Ok(categories);
     }
     
+    [EntityTagFilter]
     [HttpGet("{id}",Name = "GetCategoryByIdV1")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -43,6 +45,14 @@ public class CategoriesController : ApiControllerBasev1
         {
             return NotFound();
         }
+        
+        // TODO refactor this
+        
+        var cacheControlHeader = new CacheControlHeaderValue();
+        cacheControlHeader.Private = true;
+        cacheControlHeader.MaxAge = new TimeSpan(0, 10, 0);
+        
+        
         return Ok(model);
     }
     

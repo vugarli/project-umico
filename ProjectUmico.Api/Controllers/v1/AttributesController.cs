@@ -110,7 +110,7 @@ public class AttributesController : ApiControllerBasev1
         {
             return BadRequest();
         }
-        return Ok(result.Value);
+        return Ok(result.Value); // TODO consider to return NoContent https://stackoverflow.com/questions/25970523/restful-what-should-a-delete-response-body-contain
     }
     
     
