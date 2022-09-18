@@ -1,4 +1,5 @@
-﻿using ProjectUmico.Application.Dtos;
+﻿using AutoMapper;
+using ProjectUmico.Application.Dtos;
 
 namespace ProjectUmico.Application.Common.Models;
 
@@ -15,6 +16,8 @@ public class Result<T> where T:class
         Errors = errors.ToArray();
         Value = value;
     }
+    
+    
     public string[] Errors { get; set; }
 
     public bool Succeded { get; set; }
@@ -23,6 +26,7 @@ public class Result<T> where T:class
     {
         return new Result<T>(true,Array.Empty<string>(),value);
     }
+    
     public static Result<T> Failure(IEnumerable<string> errors)
     {
         return new Result<T>(false,errors);

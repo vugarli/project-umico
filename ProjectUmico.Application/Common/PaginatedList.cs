@@ -55,6 +55,16 @@ public class PaginatedList<T> : IPageNavigationViewModel
 
         return new PaginatedList<T>(result, page, pagesize, count);
     }
+    public static async Task<PaginatedList<R>> CreateWithProjectionAsync<T,R>(IQueryable<T> source, int page, int pagesize,IMapper mapper)
+    where R : class
+    {
+        var count = await source.CountAsync();
+
+        var result = await source.Skip((page - 1) * pagesize).Take(pagesize)
+            .ProjectToListAsync<R>(mapper.ConfigurationProvider);
+
+        return new PaginatedList<R>(result, page, pagesize, count);
+    }
 }
 
 public static class PaginatedListExtensions
@@ -66,6 +76,13 @@ public static class PaginatedListExtensions
         int pageNumber) where T : class
     {
         return PaginatedList<T>.CreateAsync(source.AsNoTracking(), pageNumber, pageSize);
+    }
+    public static Task<PaginatedList<R>> ToPaginatedListWithProjectionAsync<T,R>(this IQueryable<T> source, int pageSize,
+        int pageNumber,IMapper mapper) 
+        where T : class
+        where R : class
+    {
+        return PaginatedList<T>.CreateWithProjectionAsync<T,R>(source.AsNoTracking(), pageNumber, pageSize,mapper);
     }
     
     public static Task<List<TDestination>> ProjectToListAsync<TDestination>(this IQueryable queryable, IConfigurationProvider configuration) where TDestination : class

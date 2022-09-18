@@ -45,7 +45,9 @@ public class MappingProfile : Profile
 
         CreateMap<AddProductCommandV1.AddProductCommand, Product>();
         
-        CreateMap<AddAttributeToProductCommandV1.AddAttributeToProductCommand, ProductAttribute>();
+        // CreateMap<AddAttributeToProductCommandV1.AddAttributeToProductCommand, ProductAttribute>()
+            // .IncludeMembers(a=>a.attribute);
+        CreateMap<AddAttributeToProductCommandV1.AddAttribute, ProductAttribute>();
         
         CreateMap<Product,ProductDto>();
 

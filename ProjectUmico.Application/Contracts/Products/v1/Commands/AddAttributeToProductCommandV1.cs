@@ -23,7 +23,9 @@ public static class AddAttributeToProductCommandV1
         public int? ParentAttributeId { get; set; } = default;
     }
 
-    public record AddAttributeToProductCommand(int productId,AddAttribute attribute) : IRequest<Result<AttributeDto>>;
+    public record AddAttributev2(ICollection<int> AttributeIds);
+
+    public record AddAttributeToProductCommand(int productId,AddAttributev2 attributes) : IRequest<Result<AttributeDto>>;
 
     public class
         AddAttributeToProductCommandHandler : IRequestHandler<AddAttributeToProductCommand, Result<AttributeDto>>
@@ -43,17 +45,26 @@ public static class AddAttributeToProductCommandV1
             var product = await _dbContext.Products.SingleOrDefaultAsync(p => p.Id == request.productId);
             if (product is null) throw new NotFoundException(nameof(Product), nameof(Product.Id), request.productId);
 
-            var attribute = _mapper.Map<ProductAttribute>(request);
+            
+            var attributes = new List<ProductAttribute>();
+            if (request.attributes.AttributeIds != null && request.attributes.AttributeIds.Any() )
+            {
+                foreach (var id in request.attributes.AttributeIds)
+                {
+                    var attribute = new ProductAttribute() {Id = id};
+                    attributes.Add(attribute);
+                }
+                product.Atributes = attributes;
+            }
+            _dbContext.Attributes.AttachRange(attributes);
             
             
-            product.Atributes = new(){attribute};
-            _dbContext.Products.Attach(product);
             var result = await _dbContext.SaveChangesAsync(cancellationToken);
 
             if (result > 0)
             {
-                var attributeDto = _mapper.Map<AttributeDto>(attribute);
-                return Result<AttributeDto>.Success(attributeDto);
+                // var attributeDto = _mapper.Map<AttributeDto>();
+                return Result<AttributeDto>.Success();
             }
             else return Result<AttributeDto>.Failure();
         }

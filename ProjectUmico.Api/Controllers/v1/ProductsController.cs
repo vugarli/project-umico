@@ -1,10 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectUmico.Application.Common;
 using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Contracts;
 using ProjectUmico.Application.Contracts.Attributes.v1.Commands;
+using ProjectUmico.Application.Contracts.Attributes.v1.Queries;
 using ProjectUmico.Application.Contracts.Products.v1.Commands;
 using ProjectUmico.Application.Dtos;
 using ProjectUmico.Application.Products.Commands;
@@ -128,7 +130,7 @@ public class ProductsController : ApiControllerBasev1
 
     [HttpPost("{productId:int}/attributes")]
     public async Task<IActionResult> AddAttributeToProduct([FromRoute] int productId,
-        [FromBody] AddAttributeToProductCommandV1.AddAttribute command)
+        [FromBody] AddAttributeToProductCommandV1.AddAttributev2 command)
     {
         Result<AttributeDto> result;
         try
@@ -156,5 +158,30 @@ public class ProductsController : ApiControllerBasev1
 
         var url = Url.Link("GetAttributeByIdV1", new {id = result.Value?.Id}) ?? "N/A";
         return Created(url, result.Value);
+    }
+    
+    [HttpGet("{productId:int}/attributes")]
+    public async Task<IActionResult> GetAttributesForProduct([FromRoute] int productId,
+        [FromQuery]PaginationQuery query)
+    {
+        PaginatedList<AttributeDto> result;
+        try
+        {
+            result = await _mediator.Send(
+                new GetAllAttributesOfProductQueryV1.GetAllAttributesOfProductQuery(productId,query));
+        }
+        catch (DbUpdateException e)
+        {
+            return BadRequest();
+        }
+        catch (FluentValidation.ValidationException e)
+        {
+            return BadRequest();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+        return Ok(result);
     }
 }
