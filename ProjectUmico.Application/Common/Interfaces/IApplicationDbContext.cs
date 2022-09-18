@@ -4,7 +4,6 @@ using umico.Models;
 using umico.Models.Categories;
 using umico.Models.Order;
 using umico.Models.Rating;
-using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
 
 namespace ProjectUmico.Application.Common.Interfaces;
 
@@ -20,7 +19,7 @@ public interface IApplicationDbContext
     public DbSet<RatingBase> Ratings { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<Attribute> Attributes { get; set; }
+    public DbSet<ProductAttribute> Attributes { get; set; }
     public DbSet<CompanyProductSaleEntry> CompanyProductSaleEntries { get; set; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

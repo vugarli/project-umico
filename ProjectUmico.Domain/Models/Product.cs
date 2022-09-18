@@ -2,7 +2,6 @@
 using ProjectUmico.Domain.Models.Attributes;
 using umico.Models.Categories;
 using umico.Models.Rating;
-using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
 
 namespace umico.Models;
 
@@ -22,7 +21,7 @@ public class Product : BaseAuditableEntity
 
     public List<Promotion> PromotionsForProduct { get; set; }
 
-    public List<Attribute> Atributes { get; set; }
+    public List<ProductAttribute> Atributes { get; set; }
 
     public Category Category { get; set; }
     public int CategoryId { get; set; }

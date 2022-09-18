@@ -5,6 +5,9 @@ using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
+using ProjectUmico.Domain.Exceptions;
+using ProjectUmico.Domain.Models.Attributes;
+using Attribute = System.Attribute;
 
 namespace ProjectUmico.Application.Contracts.Attributes.v1.Commands;
 
@@ -13,7 +16,9 @@ public static class UpdateAttributeCommandV1
     public record UpdateAttributeCommand() : IRequest<Result<AttributeDto>>
     {
         public int Id { get; set; }
-        public string Value { get; set; } = default!;
+        public string Value { get; set; }
+        public AttributeType AttributeType { get; set; }
+        public int? ParentAttributeId { get; set; } = default;
     }
     
     public class UpdateAttributeCommandHandler : IRequestHandler<UpdateAttributeCommand,Result<AttributeDto>>
@@ -32,10 +37,39 @@ public static class UpdateAttributeCommandV1
 
             if (attribute is null)
             {
-                throw new NotFoundException(nameof(Domain.Models.Attributes.Attribute),nameof(Domain.Models.Attributes.Attribute.Id));
+                throw new NotFoundException(nameof(Domain.Models.Attributes.ProductAttribute),nameof(Domain.Models.Attributes.ProductAttribute.Id));
+            }
+            
+            if (request.AttributeType is AttributeType.AttributeGroup && request.ParentAttributeId != null)
+            {
+                throw new AttributeExceptions.GroupAttributeCantHaveParentException();
             }
 
-            attribute.Value = request.Value;
+            if (request.AttributeType is AttributeType.Attribute && request.ParentAttributeId != null)
+            {
+                var parentAttribute =
+                    await _dbContext.Attributes.AsNoTracking().SingleOrDefaultAsync(a => a.Id == request.ParentAttributeId,
+                        cancellationToken);
+
+                if (parentAttribute is null)
+                {
+                    throw new NotFoundException(nameof(ProductAttribute), nameof(ProductAttribute.Id), request.ParentAttributeId);
+                }
+
+                if (parentAttribute.AttributeType is AttributeType.Attribute)
+                {
+                    throw new AttributeExceptions.AttributeCantHaveAttributeParentException();
+                }
+            }
+            else if(request.AttributeType is AttributeType.Attribute)
+            {
+                throw new AttributeExceptions.AttributeMustHaveParentException(); 
+            }
+            
+            
+            // attribute.Value = request.Value;
+            attribute = _mapper.Map<ProductAttribute>(request);
+            
             
             var result = await _dbContext.SaveChangesAsync(cancellationToken);            
             

@@ -5,7 +5,7 @@ using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
-using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
+using ProjectUmico.Domain.Models.Attributes;
 
 namespace ProjectUmico.Application.Contracts.Attributes.v1.Commands;
 
@@ -30,7 +30,7 @@ public static class DeleteAttributeCommandV1
 
             if (attribute is null)
             {
-                throw new NotFoundException(nameof(Attribute),nameof(Attribute.Id),request.Id);
+                throw new NotFoundException(nameof(ProductAttribute),nameof(ProductAttribute.Id),request.Id);
             }
             _dbContext.Attributes.Remove(attribute);
             var result = await _dbContext.SaveChangesAsync(cancellationToken);

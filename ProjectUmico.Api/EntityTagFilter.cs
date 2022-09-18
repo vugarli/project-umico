@@ -14,10 +14,9 @@ public class EntityTagFilter : ActionFilterAttribute
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var request = context.HttpContext.Request;
-        
         var executedContext = await next();
-        
         var response = context.HttpContext.Response;
+        
         // Computing ETags for Response Caching on GET requests
         if (request.Method is "GET" && response.HttpContext.Response.StatusCode is StatusCodes.Status200OK)
         {
@@ -38,9 +37,14 @@ public class EntityTagFilter : ActionFilterAttribute
         // TODO handle null
         var result = (ICachable)(executedContext.Result as ObjectResult).Value;
 
+        if (result?.LastModified is null)
+        {
+            return;
+        }
+        
         var hashCode = result.LastModified.GetHashCode(); // TODO implement proper hashing
         
-        var entityTag = $"/{hashCode}/";
+        var entityTag = hashCode.ToString();
 
         if (request.Headers.ContainsKey(HeaderNames.IfNoneMatch))
         {

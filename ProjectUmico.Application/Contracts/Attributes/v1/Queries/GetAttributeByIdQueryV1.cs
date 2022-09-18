@@ -5,7 +5,7 @@ using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
-using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
+using ProjectUmico.Domain.Models.Attributes;
 
 namespace ProjectUmico.Application.Contracts.Attributes.v1.Queries;
 
@@ -31,7 +31,7 @@ public static class GetAttributeByIdQueryV1
 
             if (attribute is null)
             {
-                throw new NotFoundException(nameof(Attribute),nameof(Attribute.Id),request.Id);
+                throw new NotFoundException(nameof(ProductAttribute),nameof(ProductAttribute.Id),request.Id);
             }
 
             return _mapper.Map<AttributeDto>(attribute);

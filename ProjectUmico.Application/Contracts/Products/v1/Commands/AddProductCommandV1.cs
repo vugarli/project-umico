@@ -7,7 +7,6 @@ using ProjectUmico.Application.Dtos;
 using ProjectUmico.Domain.Models.Attributes;
 using umico.Models;
 using umico.Models.Categories;
-using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
 
 namespace ProjectUmico.Application.Products.Commands;
 
@@ -41,12 +40,12 @@ public static class AddProductCommandV1
         
             _mapper.Map(request,newProduct);
 
-            var attributes = new List<Attribute>();
+            var attributes = new List<ProductAttribute>();
             if (request.AttributeIds != null && request.AttributeIds.Any() )
             {
                 foreach (var id in request.AttributeIds)
                 {
-                    var attribute = new Attribute() {Id = id};
+                    var attribute = new ProductAttribute() {Id = id};
                     attributes.Add(attribute);
                 }
                 newProduct.Atributes = attributes;

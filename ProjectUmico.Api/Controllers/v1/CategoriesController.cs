@@ -56,9 +56,14 @@ public class CategoriesController : ApiControllerBasev1
         return Ok(model);
     }
     
-    [HttpPut]
-    public async Task<IActionResult> Edit(UpdateCategoryCommandV1.UpdateCategoryCommand command)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Edit(int id,UpdateCategoryCommandV1.UpdateCategoryCommand command)
     {
+        if (id != command.Id)
+        {
+            return BadRequest();
+        }
+        
         Result<CategoryDto> result;
         try
         {

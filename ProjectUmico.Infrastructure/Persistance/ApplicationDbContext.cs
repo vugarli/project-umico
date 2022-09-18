@@ -11,7 +11,6 @@ using umico.Models;
 using umico.Models.Categories;
 using umico.Models.Order;
 using umico.Models.Rating;
-using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
 
 // using umico.Models.UserPersistance;
 
@@ -127,8 +126,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             .OnDelete(DeleteBehavior.NoAction);
         // Attribute
 
-        modelBuilder.Entity<Attribute>()
-            .HasOne<Attribute>(a => a.ParentAttribute)
+        modelBuilder.Entity<ProductAttribute>()
+            .HasOne<ProductAttribute>(a => a.ParentAttribute)
             .WithMany(m => m.Children) //TODO .WithMany<Attribute>(m => m.Children) gives error. Find out why 
             .HasForeignKey(e => e.ParentAttributeId)
             .OnDelete(DeleteBehavior.NoAction);
@@ -161,9 +160,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     // Product Related
     public DbSet<RatingBase> Ratings { get; set; }
-    public DbSet<Attribute> Attributes { get; set; }
+    public DbSet<ProductAttribute> Attributes { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<Attribute> ProductAtributes { get; set; }
+    public DbSet<ProductAttribute> ProductAtributes { get; set; }
     public DbSet<CompanyProductSaleEntry> CompanyProductSaleEntries { get; set; }
 }

@@ -8,7 +8,6 @@ using ProjectUmico.Application.Dtos;
 using ProjectUmico.Domain.Exceptions;
 using ProjectUmico.Domain.Models.Attributes;
 using umico.Models;
-using Attribute = ProjectUmico.Domain.Models.Attributes.Attribute;
 
 namespace ProjectUmico.Application.Contracts.Attributes.v1.Commands;
 
@@ -34,33 +33,8 @@ public static class AddAttributeCommandV1
 
         public async Task<Result<AttributeDto>> Handle(AddAttributeCommand request, CancellationToken cancellationToken)
         {
-            if (request.AttributeType is AttributeType.AttributeGroup && request.ParentAttributeId != null)
-            {
-                throw new AttributeExceptions.GroupAttributeCantHaveParentException();
-            }
-
-            if (request.AttributeType is AttributeType.Attribute && request.ParentAttributeId != null)
-            {
-                var parentAttribute =
-                    await _dbContext.Attributes.SingleOrDefaultAsync(a => a.Id == request.ParentAttributeId,
-                        cancellationToken);
-
-                if (parentAttribute is null)
-                {
-                    throw new NotFoundException(nameof(Attribute), nameof(Attribute.Id), request.ParentAttributeId);
-                }
-
-                if (parentAttribute.AttributeType is AttributeType.Attribute)
-                {
-                    throw new AttributeExceptions.AttributeCantHaveAttributeParentException();
-                }
-            }
-            else if(request.AttributeType is AttributeType.Attribute)
-            {
-                throw new AttributeExceptions.AttributeMustHaveParentException(); 
-            }
+            var attribute = _mapper.Map<ProductAttribute>(request);
             
-            var attribute = _mapper.Map<Attribute>(request);
             _dbContext.Attributes.Add(attribute);
 
             int result = await _dbContext.SaveChangesAsync(cancellationToken);

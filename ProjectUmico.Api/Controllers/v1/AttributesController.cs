@@ -71,9 +71,14 @@ public class AttributesController : ApiControllerBasev1
         return Created(url,result.Value);
     }    
     
-    [HttpPut]
-    public async Task<IActionResult> AddAttribute([FromBody]UpdateAttributeCommandV1.UpdateAttributeCommand command)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateAttribute(int id,[FromBody]UpdateAttributeCommandV1.UpdateAttributeCommand command)
     {
+        if (id != command.Id)
+        {
+            return BadRequest();
+        }
+        
         Result<AttributeDto> result;
 
         try
@@ -93,7 +98,7 @@ public class AttributesController : ApiControllerBasev1
     }    
     
     [HttpDelete]
-    public async Task<IActionResult> AddAttribute(int id)
+    public async Task<IActionResult> DeleteAttribute(int id)
     {
         Result<AttributeDto> result;
 
