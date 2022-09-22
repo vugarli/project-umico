@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectUmico.Infrastructure.Persistance.Migrations
 {
-    public partial class Initial : Migration
+    public partial class _10bb3a0036164624a3eb9bf2554ea280 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

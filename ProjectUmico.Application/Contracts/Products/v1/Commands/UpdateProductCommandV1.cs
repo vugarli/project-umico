@@ -14,7 +14,7 @@ public static  class UpdateProductCommandV1
 {
     public record UpdateProductCommand : IRequest<Result<ProductDto>>
     {
-        // do not change names of properties. Mapper uses them
+        // do not change names of properties. Mapper uses them 
         public int Id { get; set; } 
         public string SKU { get; set; } = default!;
         public string Name { get; set; } = default!;
@@ -42,12 +42,11 @@ public static  class UpdateProductCommandV1
             {
                 throw new NotFoundException(nameof(Product),nameof(Product.Id),request.Id);
             }
-            // TODO update this part with mapper
-            // oldProduct.Name = request.Name;
-            // oldProduct.SKU = request.Sku;
-            // oldProduct.Description = request.Description;
-            // oldProduct.ThumbnailUrl = request.ThumbnailUrl ?? "N/A";
-            _mapper.Map<UpdateProductCommand,Product>(request,oldProduct);
+            
+            // mapper only maps non null values. Null values on request won't be mapped to source.
+            // Also for convenience params with "string" value won't be mapped as Swagger defaults to that value for string type.
+            
+            _mapper.Map(request,oldProduct);
             
             if (request.CategoryId != default)
             {

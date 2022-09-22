@@ -9,19 +9,25 @@ namespace ProjectUmico.Infrastructure;
 
 public static class InfrastructureServicesExtension
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,IConfiguration Configuration)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
+        IConfiguration Configuration, string env)
     {
-        
         // register app interfaces
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
-        
-        services.AddDbContext<ApplicationDbContext>(options =>
+
+
+        if (env is "Development")
         {
-            options.UseSqlServer(Configuration["DbConnect"]);
-        });
-        
-        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-        
+            services.AddDbContext<SqlLiteDbContext>();
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<SqlLiteDbContext>());
+        }
+        else
+        {
+            services.AddDbContext<ApplicationDbContext>();
+            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        }
+
+
         // entity config?
         // inject config to decide whether to use in mem db or sql one
         // services register

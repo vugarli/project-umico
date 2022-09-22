@@ -27,8 +27,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     // This property indicates whether or not we're running inside LINQPad:
     internal bool InsideLINQPad => AppDomain.CurrentDomain.FriendlyName.StartsWith("LINQPad");
 
-
-
+    
+    public ApplicationDbContext(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
     public ApplicationDbContext(string connectionString) => ConnectionString = connectionString;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration,
@@ -42,7 +45,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     {
         // Assign _connectionString to the optionsBuilder:
         if (ConnectionString != null)
-            optionsBuilder.UseSqlServer(ConnectionString); // Change to UseSqlite if you're using SQLite
+            optionsBuilder.UseSqlServer(ConnectionString);
+        else
+            optionsBuilder.UseSqlServer(_configuration["DbConnect"]);
+
+
         if (InsideLINQPad) optionsBuilder.EnableSensitiveDataLogging(true);
         
         if (_auditableEntitySaveChangesInterceptor != null)
