@@ -5,6 +5,7 @@ using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Dtos;
+using ProjectUmico.Domain.Models.Attributes;
 using umico.Models;
 
 namespace ProjectUmico.Application.Products.v1.Commands;
@@ -13,23 +14,21 @@ public static  class UpdateProductCommandV1
 {
     public record UpdateProductCommand : IRequest<Result<ProductDto>>
     {
-        public int Id { get; set; }
-        public string Sku { get; set; } = default!;
+        // do not change names of properties. Mapper uses them
+        public int Id { get; set; } 
+        public string SKU { get; set; } = default!;
         public string Name { get; set; } = default!;
         public string Description { get; set; } = default!;
         public string? ThumbnailUrl { get; set; }
-
-        public List<int>? AttributeIds { get; set; } = new();
-        
         public int CategoryId { get; set; }
     }
     
-    public class AddProductCommandHandler : IRequestHandler<UpdateProductCommand,Result<ProductDto>>
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,Result<ProductDto>>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public AddProductCommandHandler(IApplicationDbContext context,IMapper mapper)
+        public UpdateProductCommandHandler(IApplicationDbContext context,IMapper mapper)
         {
             _dbContext = context;
             _mapper = mapper;
@@ -44,8 +43,11 @@ public static  class UpdateProductCommandV1
                 throw new NotFoundException(nameof(Product),nameof(Product.Id),request.Id);
             }
             // TODO update this part with mapper
-            oldProduct.Name = request.Name;
-            oldProduct.SKU = request.Sku;
+            // oldProduct.Name = request.Name;
+            // oldProduct.SKU = request.Sku;
+            // oldProduct.Description = request.Description;
+            // oldProduct.ThumbnailUrl = request.ThumbnailUrl ?? "N/A";
+            _mapper.Map<UpdateProductCommand,Product>(request,oldProduct);
             
             if (request.CategoryId != default)
             {

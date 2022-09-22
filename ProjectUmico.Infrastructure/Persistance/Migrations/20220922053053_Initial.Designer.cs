@@ -12,7 +12,7 @@ using ProjectUmico.Infrastructure.Persistance;
 namespace ProjectUmico.Infrastructure.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220917202951_Initial")]
+    [Migration("20220922053053_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

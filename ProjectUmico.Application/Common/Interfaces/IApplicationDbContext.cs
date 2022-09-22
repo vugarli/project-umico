@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ProjectUmico.Domain.Models.Attributes;
 using umico.Models;
 using umico.Models.Categories;
@@ -9,6 +10,8 @@ namespace ProjectUmico.Application.Common.Interfaces;
 
 public interface IApplicationDbContext
 {
+    EntityEntry Entry(object a);
+
     public DbSet<ApplicationUser> Users { get; set; }
     
     // Order related

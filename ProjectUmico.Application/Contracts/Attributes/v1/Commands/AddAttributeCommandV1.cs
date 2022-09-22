@@ -39,6 +39,7 @@ public static class AddAttributeCommandV1
 
             int result = await _dbContext.SaveChangesAsync(cancellationToken);
             
+            
 
             if (result > 0)
             {

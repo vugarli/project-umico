@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Domain.Models.Attributes;
@@ -19,62 +20,54 @@ namespace ProjectUmico.Infrastructure.Persistance;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
 {
     private readonly IConfiguration _configuration;
-    private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
+    private readonly AuditableEntitySaveChangesInterceptor? _auditableEntitySaveChangesInterceptor;
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,IConfiguration configuration, AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor):base(options)
+    private readonly string? ConnectionString;
+
+    // This property indicates whether or not we're running inside LINQPad:
+    internal bool InsideLINQPad => AppDomain.CurrentDomain.FriendlyName.StartsWith("LINQPad");
+
+
+
+    public ApplicationDbContext(string connectionString) => ConnectionString = connectionString;
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration,
+        AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor) : base(options)
     {
         _configuration = configuration;
         _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
     }
-
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // {
-    //     optionsBuilder.UseSqlServer(_configuration["DbConnect"]);
-    //     base.OnConfiguring(optionsBuilder);
-    // }
-
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
+        // Assign _connectionString to the optionsBuilder:
+        if (ConnectionString != null)
+            optionsBuilder.UseSqlServer(ConnectionString); // Change to UseSqlite if you're using SQLite
+        if (InsideLINQPad) optionsBuilder.EnableSensitiveDataLogging(true);
+        
+        if (_auditableEntitySaveChangesInterceptor != null)
+        {
+            optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
+        }
+        
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.Entity<CompanyProductPromotionSaleEntries>()
-        //          .HasBaseType<CompanyProductSaleEntriesBase>();
-        // Sale Types
-        
-        // // Promo
-        // modelBuilder.Entity<Company>()
-        //     .HasMany<CompanyProductPromotionSaleEntries>(o=>o.PromotionSaleEntriesList)
-        //     .WithOne(o => o.Company)
-        //     .HasForeignKey(o => o.CompanyId)
-        //     .HasPrincipalKey(o=>o.Id)
-        //     .OnDelete(DeleteBehavior.NoAction);;
-        //
-        // modelBuilder.Entity<CompanyProductPromotionSaleEntries>()
-        //     .HasOne<Company>(o=>o.Company)
-        //     .WithMany(o => o.PromotionSaleEntriesList)
-        //     .HasForeignKey(o => o.CompanyId)
-        //     .HasPrincipalKey(o=>o.Id)
-        //     .OnDelete(DeleteBehavior.NoAction);;
-        //
-        
-        
         
         // Without Promo
         modelBuilder.Entity<Company>()
-            .HasMany<CompanyProductSaleEntry>(o=>o.SaleEntriesList)
+            .HasMany<CompanyProductSaleEntry>(o => o.SaleEntriesList)
             .WithOne(o => o.Company)
             .HasForeignKey(o => o.CompanyId)
-            .HasPrincipalKey(o=>o.Id)
+            .HasPrincipalKey(o => o.Id)
             .OnDelete(DeleteBehavior.NoAction);
-        
+
         modelBuilder.Entity<CompanyProductSaleEntry>()
-            .HasOne<Company>(o=>o.Company)
+            .HasOne<Company>(o => o.Company)
             .WithMany(o => o.SaleEntriesList)
             .HasForeignKey(o => o.CompanyId)
-            .HasPrincipalKey(o=>o.Id)
+            .HasPrincipalKey(o => o.Id)
             .OnDelete(DeleteBehavior.NoAction);
 
         // Rating Types
@@ -82,12 +75,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             .HasBaseType<RatingBase>();
         modelBuilder.Entity<ProductRating>()
             .HasBaseType<RatingBase>();
-        
+
         modelBuilder.Entity<RatingBase>()
             .HasDiscriminator<string>("RatingType")
             .HasValue<CompanyRating>("CompanyRating")
             .HasValue<ProductRating>("ProductRating");
-        
+
         // User Types
         modelBuilder.Entity<Company>()
             .HasBaseType<ApplicationUser>();
@@ -97,25 +90,25 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             .HasValue<ApplicationUser>("User");
 
         // Rating stuff / FRAGILE \
-        
+
         modelBuilder.Entity<CompanyRating>()
-            .HasOne<Company>(o=>o.Company)
+            .HasOne<Company>(o => o.Company)
             .WithMany(o => o.CompanyRatings)
-            .HasPrincipalKey(o=>o.Id)
+            .HasPrincipalKey(o => o.Id)
             .OnDelete(DeleteBehavior.NoAction);
-        
+
         modelBuilder.Entity<Company>()
-            .HasMany<CompanyRating>(o=>o.CompanyRatings)
+            .HasMany<CompanyRating>(o => o.CompanyRatings)
             .WithOne(o => o.Company)
-            .HasPrincipalKey(o=>o.Id)
-            .HasForeignKey(o=>o.CompanyId)
+            .HasPrincipalKey(o => o.Id)
+            .HasForeignKey(o => o.CompanyId)
             .OnDelete(DeleteBehavior.NoAction);
-        
+
         // User's rated ratings
         modelBuilder.Entity<RatingBase>()
             .HasOne(o => o.RatedUser)
             .WithMany(o => o.Ratings)
-            .HasPrincipalKey(o=>o.Id)
+            .HasPrincipalKey(o => o.Id)
             .HasForeignKey(o => o.RatedUserId);
 
         //Category
@@ -140,22 +133,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             .HasForeignKey(o => o.OrderId)
             .HasPrincipalKey(o => o.Id);
         
-        
-  
-
-        // modelBuilder.Entity<ApplicationUser>()
-        //     .HasOne<UserPersistance>(o => o.UserPersistance)
-        //     .WithOne(o => o.User)
-        //     .HasForeignKey<ApplicationUser>(o => o.UserPersistanceId);
-
-        // Console.WriteLine(modelBuilder.Model.ToDebugString());
         base.OnModelCreating(modelBuilder);
     }
-    
+
     public DbSet<ApplicationUser> Users { get; set; }
-    
+
     // Order related
-    public DbSet<Order> Orders { get; set; }    
+    public DbSet<Order> Orders { get; set; }
     public DbSet<Case> Cases { get; set; }
 
     // Product Related
@@ -163,6 +147,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<ProductAttribute> Attributes { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
+    
     public DbSet<ProductAttribute> ProductAtributes { get; set; }
+    
     public DbSet<CompanyProductSaleEntry> CompanyProductSaleEntries { get; set; }
+    
 }

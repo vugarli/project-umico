@@ -5,8 +5,6 @@ using ProjectUmico.Application.Common;
 using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Contracts;
-using ProjectUmico.Application.Contracts.Attributes.v1.Commands;
-using ProjectUmico.Application.Contracts.Attributes.v1.Queries;
 using ProjectUmico.Application.Contracts.Products.v1.Commands;
 using ProjectUmico.Application.Dtos;
 using ProjectUmico.Application.Products.Commands;
@@ -54,10 +52,10 @@ public class ProductsController : ApiControllerBasev1
         return Ok(productDto);
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> Edit(int id, UpdateProductCommandV1.UpdateProductCommand command)
+    [HttpPut("{productId:int}")]
+    public async Task<IActionResult> Edit([FromRoute]int productId, [FromBody] UpdateProductCommandV1.UpdateProductCommand command)
     {
-        if (id != command.Id)
+        if (productId != command.Id)
         {
             return BadRequest();
         }
@@ -162,7 +160,7 @@ public class ProductsController : ApiControllerBasev1
     
     [HttpGet("{productId:int}/attributes")]
     public async Task<IActionResult> GetAttributesForProduct([FromRoute] int productId,
-        [FromQuery]PaginationQuery query)
+        [FromQuery] PaginationQuery query)
     {
         PaginatedList<AttributeDto> result;
         try

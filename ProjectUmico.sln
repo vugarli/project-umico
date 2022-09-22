@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectUmico.Application", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectUmico.Domain", "ProjectUmico.Domain\ProjectUmico.Domain.csproj", "{E21C76D5-A5E8-44CB-BFCD-7E565D8CE0E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectUmico.Web", "ProjectUmico.Web\ProjectUmico.Web.csproj", "{B91E94F5-993B-4C72-A481-01EAD70DD82C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectUmico.Infrastructure", "ProjectUmico.Infrastructure\ProjectUmico.Infrastructure.csproj", "{72155EC6-692F-430F-B208-A571808FE6A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectUmico.Api", "ProjectUmico.Api\ProjectUmico.Api.csproj", "{5931BAE3-B952-4876-8605-931ACF790203}"
@@ -30,10 +28,6 @@ Global
 		{E21C76D5-A5E8-44CB-BFCD-7E565D8CE0E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E21C76D5-A5E8-44CB-BFCD-7E565D8CE0E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E21C76D5-A5E8-44CB-BFCD-7E565D8CE0E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B91E94F5-993B-4C72-A481-01EAD70DD82C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B91E94F5-993B-4C72-A481-01EAD70DD82C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B91E94F5-993B-4C72-A481-01EAD70DD82C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B91E94F5-993B-4C72-A481-01EAD70DD82C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72155EC6-692F-430F-B208-A571808FE6A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{72155EC6-692F-430F-B208-A571808FE6A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72155EC6-692F-430F-B208-A571808FE6A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
