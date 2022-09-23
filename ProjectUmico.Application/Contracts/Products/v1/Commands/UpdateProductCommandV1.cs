@@ -16,11 +16,11 @@ public static  class UpdateProductCommandV1
     {
         // do not change names of properties. Mapper uses them 
         public int Id { get; set; } 
-        public string SKU { get; set; } = default!;
-        public string Name { get; set; } = default!;
-        public string Description { get; set; } = default!;
+        public string? SKU { get; set; } = default!;
+        public string? Name { get; set; } = default!;
+        public string? Description { get; set; } = default!;
         public string? ThumbnailUrl { get; set; }
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
     }
     
     public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,Result<ProductDto>>
@@ -36,7 +36,7 @@ public static  class UpdateProductCommandV1
         
         public async Task<Result<ProductDto>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var oldProduct = await _dbContext.Products.SingleOrDefaultAsync(p=>p.Id == request.Id);
+            var oldProduct = await _dbContext.Products.SingleOrDefaultAsync(p=>p.Id == request.Id,cancellationToken);
 
             if (oldProduct is null)
             {
@@ -48,11 +48,6 @@ public static  class UpdateProductCommandV1
             
             _mapper.Map(request,oldProduct);
             
-            if (request.CategoryId != default)
-            {
-                oldProduct.CategoryId = request.CategoryId;
-            }
-
             var result = await _dbContext.SaveChangesAsync(cancellationToken);
         
             if (result > 0)

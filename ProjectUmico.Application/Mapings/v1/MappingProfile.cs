@@ -40,7 +40,8 @@ public class MappingProfile : Profile
         CreateMap<ProductAttribute, AttributeDto>();
 
         CreateMap<AddAttributeCommandV1.AddAttributeCommand, ProductAttribute>();
-
+        CreateMap<UpdateAttributeCommandV1.UpdateAttributeCommand, ProductAttribute>();
+    
 
         //CreateMap<CompanyProductSaleEntry, CompanyProductSaleEntryDto>();
         // CreateMap<ProductDto,Product>().ForPath(dest=>dest.CategoryId,opt=>opt.MapFrom(p=>p.CategoryId));
@@ -63,12 +64,18 @@ public class MappingProfile : Profile
                         .GetProperty(o.DestinationMember.Name);
                     var sourceType = sourceProp?.PropertyType as Type;
                     
-                    if (sourceType != null && sourceType == typeof(string))
+                    if (sourceType != null)
                     {
-                        if (requestMember is null || requestMember.ToString() == "string")
+                        if (requestMember is null || 
+                            (sourceType == typeof(string) && requestMember.ToString() == "string"))
                         {
                             return false;
                         }
+                        else if (sourceType == typeof(int?) && ((int?)requestMember) is null or 0)
+                        {
+                            return false;
+                        }
+                        
                     }   
                     return true;
                 });

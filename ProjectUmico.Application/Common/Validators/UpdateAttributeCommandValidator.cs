@@ -25,7 +25,8 @@ public class UpdateAttributeCommandValidator : AbstractValidator<UpdateAttribute
         // attributdusa ve parentin Id si null deyilse => Attributun ancaq AttributGroup parenti ola biler
         RuleFor(a => a)
             .MustAsync(AttributeParentMustBeAttributeGroup)
-            .When(a => a.AttributeType is AttributeType.Attribute && a.ParentAttributeId != null);
+            .When(a => a.AttributeType is AttributeType.Attribute && a.ParentAttributeId != null)
+            .WithMessage("AttributeParentMustBeAttributeGroup");
     }
     private async Task<bool> AttributeParentMustBeAttributeGroup(
         UpdateAttributeCommandV1.UpdateAttributeCommand command, CancellationToken cancellationToken)

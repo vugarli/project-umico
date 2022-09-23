@@ -33,18 +33,17 @@ public static class UpdateAttributeCommandV1
         }
         public async Task<Result<AttributeDto>> Handle(UpdateAttributeCommand request, CancellationToken cancellationToken)
         {
-            var attribute = await _dbContext.Attributes.SingleOrDefaultAsync(a => a.Id == request.Id,cancellationToken);
+            var attribute = await _dbContext.Attributes
+                .SingleOrDefaultAsync(a => a.Id == request.Id,cancellationToken);
 
             if (attribute is null)
             {
                 throw new NotFoundException(nameof(Domain.Models.Attributes.ProductAttribute),nameof(Domain.Models.Attributes.ProductAttribute.Id));
             }
-            
             if (request.AttributeType is AttributeType.AttributeGroup && request.ParentAttributeId != null)
             {
                 throw new AttributeExceptions.GroupAttributeCantHaveParentException();
             }
-
             if (request.AttributeType is AttributeType.Attribute && request.ParentAttributeId != null)
             {
                 var parentAttribute =
@@ -66,10 +65,7 @@ public static class UpdateAttributeCommandV1
                 throw new AttributeExceptions.AttributeMustHaveParentException(); 
             }
             
-            
-            // attribute.Value = request.Value;
-            attribute = _mapper.Map<ProductAttribute>(request);
-            
+            _mapper.Map<UpdateAttributeCommand,ProductAttribute>(request,attribute);
             
             var result = await _dbContext.SaveChangesAsync(cancellationToken);            
             
@@ -79,7 +75,6 @@ public static class UpdateAttributeCommandV1
                 return Result<AttributeDto>.Success(attributeDto);
             }
             else return Result<AttributeDto>.Failure();
-
         }
     }
 }
