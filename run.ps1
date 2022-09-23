@@ -39,8 +39,6 @@ $env = $args[0]
 
 
 
-
-
 if($env -eq "prod")
 {
     Handle-Docker

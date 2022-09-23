@@ -181,5 +181,29 @@ public class ProductsController : ApiControllerBasev1
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
         return Ok(result);
+    }    
+    
+    [HttpDelete("{productId:int}/attributes")]
+    public async Task<IActionResult> GetAttributesForProduct(
+        [FromBody] DeleteAttributeFromProductV1.DeleteAttributeFromProduct command)
+    {
+        bool result;
+        try
+        {
+            result = await _mediator.Send(command);
+        }
+        catch (DbUpdateException e)
+        {
+            return BadRequest();
+        }
+        catch (FluentValidation.ValidationException e)
+        {
+            return BadRequest();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+        return NoContent();
     }
 }
