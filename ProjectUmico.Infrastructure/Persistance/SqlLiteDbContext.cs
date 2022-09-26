@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ProjectUmico.Infrastructure.Persistance;
 using ProjectUmico.Infrastructure.Persistance.Interceptors;
@@ -12,7 +13,8 @@ public class SqlLiteDbContext : ApplicationDbContext
     private readonly string _connectionString;
 
 
-    public SqlLiteDbContext(IConfiguration configuration) : base(configuration)
+    public SqlLiteDbContext(DbContextOptions<ApplicationDbContext> options,IConfiguration configuration,IPasswordHasher<ApplicationUser> passwordHasher,AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor) :
+        base(options,configuration,auditableEntitySaveChangesInterceptor,passwordHasher)
     {
         _configuration = configuration;
     }

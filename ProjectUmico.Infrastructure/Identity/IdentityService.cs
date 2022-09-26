@@ -1,42 +1,68 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using ProjectUmico.Api.Common;
 using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Application.Common.Models;
+using ProjectUmico.Application.Common.Utils;
+using ProjectUmico.Application.Contracts.Authentication.v1;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace ProjectUmico.Infrastructure.Identity;
 
 public class IdentityService : IIdentityService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly JwtSettings _jwtSettings;
 
-    public IdentityService(UserManager<ApplicationUser> userManager)
+    public IdentityService(UserManager<ApplicationUser> userManager, JwtSettings jwtSettings)
     {
         _userManager = userManager;
+        _jwtSettings = jwtSettings;
     }
     
-    public async Task<(Result<ApplicationUser> result, string UserId)> CreateUser(string email, string password)
+    public async Task<AuthenticationResult> CreateUserAsync(UserRegistrationRequest registrationRequest)
     {
         var appuser = new ApplicationUser()
         {
-            UserName = email,
-            Email = email
+            UserName = registrationRequest.Email,
+            Email = registrationRequest.Email
         };
         
-        var result = await _userManager.CreateAsync(appuser,password);
+        var result = await _userManager.CreateAsync(appuser,registrationRequest.Password);
 
-        return (result.ToApplicationResult(), appuser.Id);
+        var claims = await _userManager.GetClaimsAsync(appuser);
+
+        var token = JwtTokenGenerator.GenerateToken(_jwtSettings,claims);
+        
+        return AuthenticationResultExtensions.SuccessResponseFromToken(token);
     }
 
-    public async Task<Result<ApplicationUser>> DeleteUser(string email)
+    public async Task<AuthenticationResult> AuthenticateUser(UserAuthenticationRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        
+        if (user is null) return AuthenticationResultExtensions.FailResponseForInvalidUserCredentials();
 
-        return user != null ? await DeleteUser(user) : Result<ApplicationUser>.Success();
+        var passCorrect = await _userManager.CheckPasswordAsync(user, request.Password);
+
+        if (passCorrect is false)
+        {
+            return AuthenticationResultExtensions.FailResponseForInvalidUserCredentials();
+        }
+
+        var claims = await _userManager.GetClaimsAsync(user);
+
+        var token = JwtTokenGenerator.GenerateToken(_jwtSettings,claims);
+
+        return AuthenticationResultExtensions.SuccessResponseFromToken(token);
     }
     
-    public async Task<Result<ApplicationUser>> DeleteUser(ApplicationUser user)
-    {
-        var result = await _userManager.DeleteAsync(user);
-
-        return result.ToApplicationResult();
-    }
+    
+    
+    
+    
 }

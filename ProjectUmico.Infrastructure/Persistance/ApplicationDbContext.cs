@@ -21,6 +21,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 {
     private readonly IConfiguration _configuration;
     private readonly AuditableEntitySaveChangesInterceptor? _auditableEntitySaveChangesInterceptor;
+    private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
 
     private readonly string? ConnectionString;
 
@@ -31,14 +32,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public ApplicationDbContext(IConfiguration configuration)
     {
         _configuration = configuration;
-    }
+    }    
+    // public ApplicationDbContext(IConfiguration configuration)
+    // {
+    //     _configuration = configuration;
+    // }
     public ApplicationDbContext(string connectionString) => ConnectionString = connectionString;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration,
-        AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor) : base(options)
+        AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor
+        ,IPasswordHasher<ApplicationUser> passwordHasher) : base(options)
     {
         _configuration = configuration;
         _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
+        _passwordHasher = passwordHasher;
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -57,10 +64,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
         }
         
+        
     }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+    base.OnModelCreating(modelBuilder);
+        //modelBuilder.SeedUserData(_passwordHasher);
         
         // Without Promo
         modelBuilder.Entity<Company>()
@@ -140,8 +151,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             .HasForeignKey(o => o.OrderId)
             .HasPrincipalKey(o => o.Id);
         
-        base.OnModelCreating(modelBuilder);
+        
     }
+    
 
     public DbSet<ApplicationUser> Users { get; set; }
 

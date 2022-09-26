@@ -12,8 +12,8 @@ using ProjectUmico.Infrastructure.Persistance;
 namespace ProjectUmico.Infrastructure.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220922193514_10bb3a00-3616-4624-a3eb-9bf2554ea280")]
-    partial class _10bb3a0036164624a3eb9bf2554ea280
+    [Migration("20220926115303_a48c209f-6902-43bd-8c3e-cc657e023c76")]
+    partial class a48c209f690243bd8c3ecc657e023c76
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -102,6 +102,25 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasDiscriminator<string>("UserType").HasValue("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "c93d5e12-92ae-4579-a63e-e13da972f11a",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "c60e2fda-d436-4993-add3-bfa77895c240",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "s@s.com",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PasswordHash = "AQAAAAEAACcQAAAAELfnCFO/Rsph5vOiMtxwWldoXn0JrROs5OD1cEQDG70TAA7xS96kjdC1cV55C5Lg3g==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a1b9a77e-e421-480d-8fee-6f030554e18d",
+                            TwoFactorEnabled = false,
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserName = "s@s.com",
+                            UserPersistanceId = 0
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -179,6 +198,15 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "Role",
+                            ClaimValue = "SuperAdmin",
+                            UserId = "c93d5e12-92ae-4579-a63e-e13da972f11a"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>

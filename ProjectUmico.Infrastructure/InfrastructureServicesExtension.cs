@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectUmico.Application.Common.Interfaces;
+using ProjectUmico.Infrastructure.Identity;
 using ProjectUmico.Infrastructure.Persistance;
 using ProjectUmico.Infrastructure.Persistance.Interceptors;
 
@@ -12,19 +13,28 @@ public static class InfrastructureServicesExtension
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
         IConfiguration Configuration, string env)
     {
+        services.AddScoped<IIdentityService,IdentityService>();
+
         // register app interfaces
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
 
-        if (env is "Development")
+        if (env is not "Development")
         {
             services.AddDbContext<SqlLiteDbContext>();
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<SqlLiteDbContext>());
+            
+            services.AddIdentityCore<ApplicationUser>()
+                .AddEntityFrameworkStores<SqlLiteDbContext>();
         }
         else
         {
             services.AddDbContext<ApplicationDbContext>();
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+            
+            services.AddIdentityCore<ApplicationUser>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
         }
 
 

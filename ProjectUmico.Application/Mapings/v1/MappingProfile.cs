@@ -50,11 +50,14 @@ public class MappingProfile : Profile
 
         // CreateMap<AddAttributeToProductCommandV1.AddAttributeToProductCommand, ProductAttribute>()
         // .IncludeMembers(a=>a.attribute);
-        CreateMap<AddAttributeToProductCommandV1.AddAttribute, ProductAttribute>();
-
+        
         CreateMap<Product, ProductDto>();
+
+        CreateMap<AddAttributeToProductCommandV1.AddAttribute, ProductAttribute>()
+            .ForAllMembersEnforceCustomDefaultValues();
 
         CreateMap<UpdateProductCommandV1.UpdateProductCommand, Product>()
             .ForAllMembersEnforceCustomDefaultValues();
+        
     }
 }

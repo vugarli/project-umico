@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectUmico.Infrastructure.Persistance.Migrations
 {
-    public partial class _10bb3a0036164624a3eb9bf2554ea280 : Migration
+    public partial class a48c209f690243bd8c3ecc657e023c76 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -456,6 +456,16 @@ namespace ProjectUmico.Infrastructure.Persistance.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CreatedAt", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UpdatedAt", "UserName", "UserPersistanceId", "UserType" },
+                values: new object[] { "c93d5e12-92ae-4579-a63e-e13da972f11a", 0, "c60e2fda-d436-4993-add3-bfa77895c240", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "s@s.com", false, false, null, null, null, "AQAAAAEAACcQAAAAELfnCFO/Rsph5vOiMtxwWldoXn0JrROs5OD1cEQDG70TAA7xS96kjdC1cV55C5Lg3g==", null, false, "a1b9a77e-e421-480d-8fee-6f030554e18d", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "s@s.com", 0, "User" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserClaims",
+                columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
+                values: new object[] { 1, "Role", "SuperAdmin", "c93d5e12-92ae-4579-a63e-e13da972f11a" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
