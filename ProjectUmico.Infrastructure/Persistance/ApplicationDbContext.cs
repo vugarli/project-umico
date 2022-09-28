@@ -21,14 +21,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 {
     private readonly IConfiguration _configuration;
     private readonly AuditableEntitySaveChangesInterceptor? _auditableEntitySaveChangesInterceptor;
-    private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
 
     private readonly string? ConnectionString;
 
     // This property indicates whether or not we're running inside LINQPad:
     internal bool InsideLINQPad => AppDomain.CurrentDomain.FriendlyName.StartsWith("LINQPad");
 
-    
+    public ApplicationDbContext()
+    {
+        
+    }
     public ApplicationDbContext(IConfiguration configuration)
     {
         _configuration = configuration;
@@ -40,12 +42,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public ApplicationDbContext(string connectionString) => ConnectionString = connectionString;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration,
-        AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor
-        ,IPasswordHasher<ApplicationUser> passwordHasher) : base(options)
+        AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor) : base(options)
     {
         _configuration = configuration;
         _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
-        _passwordHasher = passwordHasher;
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -71,9 +71,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
     base.OnModelCreating(modelBuilder);
-        //modelBuilder.SeedUserData(_passwordHasher);
         
-        // Without Promo
+    // Without Promo
         modelBuilder.Entity<Company>()
             .HasMany<CompanyProductSaleEntry>(o => o.SaleEntriesList)
             .WithOne(o => o.Company)

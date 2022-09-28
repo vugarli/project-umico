@@ -19,7 +19,7 @@ public static class InfrastructureServicesExtension
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
 
-        if (env is not "Development")
+        if (env is "Development")
         {
             services.AddDbContext<SqlLiteDbContext>();
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<SqlLiteDbContext>());

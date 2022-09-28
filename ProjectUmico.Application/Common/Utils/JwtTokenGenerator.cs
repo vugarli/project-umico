@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using ProjectUmico.Api.Common;
@@ -15,13 +16,23 @@ public static class JwtTokenGenerator
         
         var key = Encoding.ASCII.GetBytes(settings.Secret);
         
+        // var encryptionKey = RSA.Create(Encoding.ASCII.GetBytes(settings.Secret));
+        // var privateEncryptionKey = new RsaSecurityKey(encryptionKey) {KeyId = encryptionKid};
+        // var publicEncryptionKey = new RsaSecurityKey(encryptionKey.ExportParameters(false)) {KeyId = encryptionKid};
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
+           
             Subject = new ClaimsIdentity(claims),
-            // Expires = settings.Expires,
             Audience = "https://localhost:7098",
-            Expires = DateTime.Today.AddDays(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature)
+            Expires = DateTime.Now.Add(settings.TokenLifeTime),
+            SigningCredentials = 
+                new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature),
+            EncryptingCredentials = new EncryptingCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.Aes256KW,
+                SecurityAlgorithms.Aes256CbcHmacSha512),
+            
         };
         
         var token = tokenHandler.CreateToken(tokenDescriptor);

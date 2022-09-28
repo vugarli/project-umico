@@ -1,11 +1,13 @@
 using System.Runtime;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectUmico.Api.Common;
 using ProjectUmico.Application;
+using ProjectUmico.Application.Common.Identity;
 using ProjectUmico.Infrastructure;
 using ProjectUmico.Infrastructure.Persistance;
 
@@ -34,6 +36,10 @@ builder.Services.AddAuthentication(options =>
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+            
+            TokenDecryptionKey =
+                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
+            
             ValidateIssuer = false,
             ValidateActor = false,
             RequireExpirationTime = false,
@@ -45,7 +51,15 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(authBuilder =>
 {
-    authBuilder.AddPolicy("RequiresAuthentication", policy => { policy.RequireAuthenticatedUser(); });
+    authBuilder.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    
+    authBuilder.AddPolicy("RequiresSuperAdminRole", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.AddRequirements(new SuperAdminRequirement());
+    });
 });
 
 
