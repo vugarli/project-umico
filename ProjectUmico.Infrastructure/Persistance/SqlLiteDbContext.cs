@@ -12,13 +12,19 @@ public class SqlLiteDbContext : ApplicationDbContext
     private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
     private readonly string _connectionString;
     
-    public SqlLiteDbContext(IConfiguration configuration)
+    public SqlLiteDbContext(IConfiguration configuration,AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor)
     {
         _configuration = configuration;
+        _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlite(_configuration["SqlLiteConnection"]);
+        
+        if (_auditableEntitySaveChangesInterceptor != null)
+        {
+            optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
+        }
     }
 }

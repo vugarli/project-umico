@@ -1,12 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Domain.Common;
 
 namespace ProjectUmico.Infrastructure.Persistance.Interceptors;
 
 public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
+    private readonly ICurrentUserService _currentUserService;
+
+    public AuditableEntitySaveChangesInterceptor(ICurrentUserService currentUserService)
+    {
+        _currentUserService = currentUserService;
+    }
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
         UpdateEntities(eventData.Context);
@@ -26,12 +34,13 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
         {
             if (entity.State == EntityState.Added)
             {
-                // TODO add record for user who modified
                 entity.Property(e => e.CreatedAt).CurrentValue = DateTime.Now;
+                entity.Property(e => e.CreatedBy).CurrentValue = _currentUserService.UserId;
             }
             if (entity.State == EntityState.Added || entity.State == EntityState.Modified || entity.HasUpdatedOwnedTypes())
             {
                 entity.Property(e => e.LastModified).CurrentValue = DateTime.Now;
+                entity.Property(e => e.LastModifiedBy).CurrentValue = _currentUserService.UserId;
             }
         }
     }

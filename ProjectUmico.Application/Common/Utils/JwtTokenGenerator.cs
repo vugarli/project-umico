@@ -22,7 +22,6 @@ public static class JwtTokenGenerator
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-           
             Subject = new ClaimsIdentity(claims),
             Audience = "https://localhost:7098",
             Expires = DateTime.Now.Add(settings.TokenLifeTime),

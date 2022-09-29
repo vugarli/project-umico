@@ -36,8 +36,7 @@ public static class InfrastructureServicesExtension
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
         }
-
-
+        
         // entity config?
         // inject config to decide whether to use in mem db or sql one
         // services register

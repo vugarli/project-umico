@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectUmico.Api.Common;
+using ProjectUmico.Api.Services;
 using ProjectUmico.Application;
 using ProjectUmico.Application.Common.Identity;
+using ProjectUmico.Application.Common.Interfaces;
 using ProjectUmico.Infrastructure;
 using ProjectUmico.Infrastructure.Persistance;
 
@@ -20,6 +22,8 @@ builder.Services.AddInfrastructureServices(builder.Configuration, builder.Enviro
 var jwtSettings = new JwtSettings();
 builder.Configuration.Bind(nameof(JwtSettings), jwtSettings);
 builder.Services.AddSingleton(jwtSettings);
+builder.Services.AddSingleton<ICurrentUserService, CurrentUserService>();
+
 
 builder.Services.AddAuthentication(options =>
     {
@@ -61,7 +65,7 @@ builder.Services.AddAuthorization(authBuilder =>
         policy.AddRequirements(new SuperAdminRequirement());
     });
 });
-
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers(options =>
 {

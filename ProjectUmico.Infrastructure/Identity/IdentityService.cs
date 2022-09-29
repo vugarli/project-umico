@@ -25,15 +25,15 @@ public class IdentityService : IIdentityService
     
     public async Task<AuthenticationResult> CreateUserAsync(UserRegistrationRequest registrationRequest)
     {
-        var appuser = new ApplicationUser()
+        var user = new ApplicationUser()
         {
             UserName = registrationRequest.Email,
             Email = registrationRequest.Email
         };
         
-        var result = await _userManager.CreateAsync(appuser,registrationRequest.Password);
+        var result = await _userManager.CreateAsync(user,registrationRequest.Password);
 
-        var claims = await _userManager.GetClaimsAsync(appuser);
+        var claims = await GetClaimsAsync(user);
 
         var token = JwtTokenGenerator.GenerateToken(_jwtSettings,claims);
         
@@ -54,15 +54,22 @@ public class IdentityService : IIdentityService
             return AuthenticationResultExtensions.FailResponseForInvalidUserCredentials();
         }
 
-        var claims = await _userManager.GetClaimsAsync(user);
-
+        var claims = await GetClaimsAsync(user);
+        
         var token = JwtTokenGenerator.GenerateToken(_jwtSettings,claims);
 
         return AuthenticationResultExtensions.SuccessResponseFromToken(token);
     }
-    
-    
-    
-    
+
+    private async Task<IList<Claim>> GetClaimsAsync(ApplicationUser user)
+    {
+        var claims = await _userManager.GetClaimsAsync(user);
+
+        // Additional claims
+        claims.Add(new Claim(ClaimTypes.NameIdentifier,user.Id));
+        claims.Add(new Claim(ClaimTypes.Email,user.Email));
+        
+        return claims;
+    }
     
 }
