@@ -16,18 +16,12 @@ namespace ProjectUmico.Application.Contracts.Products.v1.Commands;
 
 public static class AddAttributeToProductCommandV1
 {
-    public record AddAttribute
-    {
-        public int? Id { get; set; }
-        public string Value { get; set; }
-        public AttributeType AttributeType { get; set; }
-        public int? ParentAttributeId { get; set; } = default;
-    }
 
-    public record AddAttributev2(ICollection<int> AttributeIds);
+
+    public record AddAttributes(ICollection<int> AttributeIds);
 
     public record AddAttributeToProductCommand
-        (int productId, AddAttributev2 attributes) : IRequest<Result<AttributeDto>>;
+        (int productId, AddAttributes attributes) : IRequest<Result<AttributeDto>>;
 
     public class
         AddAttributeToProductCommandHandler : IRequestHandler<AddAttributeToProductCommand, Result<AttributeDto>>

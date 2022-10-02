@@ -128,7 +128,7 @@ public class ProductsController : ApiControllerBasev1
 
     [HttpPost("{productId:int}/attributes")]
     public async Task<IActionResult> AddAttributeToProduct([FromRoute] int productId,
-        [FromBody] AddAttributeToProductCommandV1.AddAttributev2 command)
+        [FromBody] AddAttributeToProductCommandV1.AddAttributes command)
     {
         Result<AttributeDto> result;
         try
@@ -206,4 +206,34 @@ public class ProductsController : ApiControllerBasev1
         }
         return NoContent();
     }
+
+    [HttpPost("{productId:int}/ratings")]
+    public async Task<IActionResult> AddRating(AddRatingToProductCommandV1.AddRatingToProductCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return Ok(result);
+    }
+    
+    
+    [HttpGet("{productId:int}/ratings")]
+    public async Task<IActionResult> GetAllRatings([FromRoute] GetAllProductRatingsQueryV1.GetAllProductRatingsQuery query)
+    {
+        ICollection<ProductRatingDto> result;
+
+        try
+        {
+            result = await _mediator.Send(query);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+        return Ok(result);
+    }
+    
+    
 }

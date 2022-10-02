@@ -35,7 +35,11 @@ public class MappingProfile : Profile
             .ForPath(dest => dest.ParentId, opt => opt.MapFrom(d => d.ParentId))
             .ForPath(dest => dest.Name, opt => opt.MapFrom(d => d.CategoryName));
 
-        CreateMap<ProductRating, ProductRatingDto>();
+        CreateMap<ProductRating, ProductRatingDto>()
+            .ForPath(dest=>dest.Rate,
+                opt=>
+                    opt.MapFrom(src=>src.Rate));
+        
         CreateMap<Promotion, PromotionDto>();
         CreateMap<ProductAttribute, AttributeDto>();
 
@@ -53,11 +57,16 @@ public class MappingProfile : Profile
         
         CreateMap<Product, ProductDto>();
 
-        CreateMap<AddAttributeToProductCommandV1.AddAttribute, ProductAttribute>()
-            .ForAllMembersEnforceCustomDefaultValues();
+        // CreateMap<AddAttributeToProductCommandV1.AddAttribute, ProductAttribute>()
+        //     .ForAllMembersEnforceCustomDefaultValues();
 
         CreateMap<UpdateProductCommandV1.UpdateProductCommand, Product>()
             .ForAllMembersEnforceCustomDefaultValues();
+        
+        CreateMap<AddRatingToProductCommandV1.AddRatingToProductCommand, ProductRating>()
+            .ForAllMembersEnforceCustomDefaultValues();
+        
+        
         
     }
 }

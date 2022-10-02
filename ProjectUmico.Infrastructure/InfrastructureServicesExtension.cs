@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectUmico.Application.Common.Interfaces;
+using ProjectUmico.Application.Services;
 using ProjectUmico.Infrastructure.Identity;
 using ProjectUmico.Infrastructure.Persistance;
 using ProjectUmico.Infrastructure.Persistance.Interceptors;

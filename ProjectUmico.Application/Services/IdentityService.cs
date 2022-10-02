@@ -1,16 +1,11 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using ProjectUmico.Api.Common;
 using ProjectUmico.Application.Common.Interfaces;
-using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Common.Utils;
 using ProjectUmico.Application.Contracts.Authentication.v1;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace ProjectUmico.Infrastructure.Identity;
+namespace ProjectUmico.Application.Services;
 
 public class IdentityService : IIdentityService
 {
