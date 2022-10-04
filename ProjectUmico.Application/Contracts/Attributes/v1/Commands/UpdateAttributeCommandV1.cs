@@ -38,12 +38,15 @@ public static class UpdateAttributeCommandV1
 
             if (attribute is null)
             {
-                throw new NotFoundException(nameof(Domain.Models.Attributes.ProductAttribute),nameof(Domain.Models.Attributes.ProductAttribute.Id));
+                var ex =  new NotFoundException(nameof(Domain.Models.Attributes.ProductAttribute),nameof(Domain.Models.Attributes.ProductAttribute.Id));
+                return Result<AttributeDto>.Failure(ex);
             }
             if (request.AttributeType is AttributeType.AttributeGroup && request.ParentAttributeId != null)
             {
-                throw new AttributeExceptions.GroupAttributeCantHaveParentException();
+                var ex = new AttributeExceptions.GroupAttributeCantHaveParentException();
+                return Result<AttributeDto>.Failure(ex);
             }
+            // TODO validation add then fix controller
             if (request.AttributeType is AttributeType.Attribute && request.ParentAttributeId != null)
             {
                 var parentAttribute =

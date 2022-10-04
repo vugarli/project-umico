@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectUmico.Api.Common;
+using ProjectUmico.Api.Identity;
 using ProjectUmico.Api.Services;
-using ProjectUmico.Application.Common.Identity;
 using ProjectUmico.Application.Common.Interfaces;
 
 namespace ProjectUmico.Api;
@@ -14,6 +14,11 @@ public static class ApiServicesExtensions
 {
     public static void AddApiServices(this IServiceCollection services, IConfiguration Configuration)
     {
+        // AuthorizationHandlers
+        services.AddSingleton<IAuthorizationHandler, SuperAdminRequirementHandler>();
+        services.AddSingleton<IAuthorizationHandler, UserIsCompanyTypeRequirementHandler>();
+
+        
         // Jwt Settings
         var jwtSettings = new JwtSettings();
         Configuration.Bind(nameof(JwtSettings), jwtSettings);
@@ -75,6 +80,13 @@ public static class ApiServicesExtensions
                 policy.RequireAuthenticatedUser();
                 policy.AddRequirements(new SuperAdminRequirement());
             });
+            
+            authBuilder.AddPolicy("RequiresCompanyTypeUser", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.AddRequirements(new UserIsCompanyTypeRequirement());
+            });
+            
         });
     }
 

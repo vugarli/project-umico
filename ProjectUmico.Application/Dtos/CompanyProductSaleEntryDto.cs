@@ -5,8 +5,8 @@ namespace ProjectUmico.Application.Dtos;
 
 public class CompanyProductSaleEntryDto : ICachable
 {
-    public string CompanyName { get; set; }
     public string CompanyId { get; set; }
+    public string CompanyName { get; set; }
     
     public int ProductId { get; set; }
     

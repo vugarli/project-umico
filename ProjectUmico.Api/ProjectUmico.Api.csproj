@@ -23,7 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Common" />
+      <Reference Include="FluentValidation.AspNetCore">
+        <HintPath>..\..\..\.nuget\packages\fluentvalidation.aspnetcore\11.2.2\lib\net6.0\FluentValidation.AspNetCore.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

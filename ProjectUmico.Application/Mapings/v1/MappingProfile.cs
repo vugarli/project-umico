@@ -3,6 +3,7 @@ using AutoMapper;
 using ProjectUmico.Application.Common;
 using ProjectUmico.Application.Contracts.Attributes.v1.Commands;
 using ProjectUmico.Application.Contracts.Products.v1.Commands;
+using ProjectUmico.Application.Contracts.SaleEntries.v1.Commands;
 using ProjectUmico.Application.Dtos;
 using ProjectUmico.Application.Products.Commands;
 using ProjectUmico.Application.Products.v1.Commands;
@@ -65,8 +66,10 @@ public class MappingProfile : Profile
         
         CreateMap<AddRatingToProductCommandV1.AddRatingToProductCommand, ProductRating>()
             .ForAllMembersEnforceCustomDefaultValues();
-        
-        
-        
+
+        CreateMap<AddSaleEntryCommandV1.AddSaleEntryCommand, CompanyProductSaleEntry>();
+
+        CreateMap<CompanyProductSaleEntry,CompanyProductSaleEntryDto>();
+
     }
 }

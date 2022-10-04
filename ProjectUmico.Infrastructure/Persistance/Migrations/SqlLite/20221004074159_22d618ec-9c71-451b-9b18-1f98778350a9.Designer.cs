@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectUmico.Infrastructure;
 
@@ -10,9 +11,10 @@ using ProjectUmico.Infrastructure;
 namespace ProjectUmico.Infrastructure.Persistance.Migrations.SqlLite
 {
     [DbContext(typeof(SqlLiteDbContext))]
-    partial class SqlLiteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221004074159_22d618ec-9c71-451b-9b18-1f98778350a9")]
+    partial class _22d618ec9c71451b9b181f98778350a9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.9");

@@ -71,7 +71,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
     base.OnModelCreating(modelBuilder);
-        
+     
+    modelBuilder.ApplySeeding();
+    
+    
     // Without Promo
         modelBuilder.Entity<Company>()
             .HasMany<CompanyProductSaleEntry>(o => o.SaleEntriesList)

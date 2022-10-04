@@ -12,11 +12,9 @@ namespace ProjectUmico.Application.Contracts.Products.v1.Commands;
 
 public static class AddRatingToProductCommandV1
 {
-    
     public record AddRatingToProductCommand(string Comment, int Rate, int ProductId)
         :IRequest<Result<ProductRatingDto>>;
-    
-    
+
     public class AddRatingToProductCommandHandler 
         : IRequestHandler<AddRatingToProductCommand,Result<ProductRatingDto>>
     {

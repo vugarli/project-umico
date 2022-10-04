@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using ProjectUmico.Api;
 using ProjectUmico.Application;
@@ -19,6 +20,7 @@ builder.Services.AddControllers(options =>
     options.ReturnHttpNotAcceptable = true;
 }).AddXmlSerializerFormatters();
 
+
 builder.Services.AddApiVersioning(o =>
 {
     o.AssumeDefaultVersionWhenUnspecified = true;
@@ -33,7 +35,7 @@ builder.Services.AddApiVersioning(o =>
 
 var app = builder.Build();
 
-ApplySeedingExtensions.SeedUserData(app.Services);
+ApplyIdentitySeedingExtensions.SeedUserData(app.Services);
 
 if (app.Environment.IsDevelopment())
 {

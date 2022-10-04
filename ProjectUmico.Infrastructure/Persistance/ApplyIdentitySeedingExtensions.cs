@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectUmico.Infrastructure.Persistance;
 
-public static class ApplySeedingExtensions
+public static class ApplyIdentitySeedingExtensions
 {
     public static async void SeedUserData(IServiceProvider serviceProvider)
     {

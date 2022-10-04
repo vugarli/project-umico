@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using ProjectUmico.Api.Common.Helpers;
+using ProjectUmico.Application.Common;
 using ProjectUmico.Application.Common.Exceptions;
 using ProjectUmico.Application.Common.Models;
 using ProjectUmico.Application.Contracts;
@@ -18,38 +19,68 @@ public class AttributesController : ApiControllerBasev1
     {
         _mediator = mediator;
     }
-    
-    
+
+
     [HttpGet]
-    public async Task<IActionResult> Index([FromQuery]PaginationQuery query)
+    public async Task<IActionResult> Index([FromQuery] PaginationQuery query)
     {
-        var attributes = await _mediator.Send(new GetAllAttributesQueryV1.GetAllAttributesQuery(query));
-        if (!attributes.Items.Any())
-        {
-            return NoContent();
-        }
+        Result<PaginatedList<AttributeDto>> result;
         
-        return Ok(attributes);
-    }
-    
-    [HttpGet("{id}",Name = "GetAttributeByIdV1")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        AttributeDto attributeDto;
         try
         {
-            attributeDto = await _mediator.Send(new GetAttributeByIdQueryV1.GetAttributeByIdQuery(id));
+            result = await _mediator.Send(new GetAllAttributesQueryV1.GetAllAttributesQuery(query));
         }
-        catch (NotFoundException e)
+        catch (FluentValidation.ValidationException e)
         {
-            return NotFound(e.Message);
+            return e.ToValidationFailedResult(ModelState);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
         
-        return Ok(attributeDto);
+        return result.Match(() =>
+        {
+            if (!result.Value!.Items.Any())
+            {
+                return NoContent();
+            }
+            return Ok(result.Value);
+        }, exception => StatusCode(StatusCodes.Status500InternalServerError));
     }
-    
+
+    [HttpGet("{id}", Name = "GetAttributeByIdV1")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        Result<AttributeDto> result;
+        try
+        {
+            result = await _mediator.Send(new GetAttributeByIdQueryV1.GetAttributeByIdQuery(id));
+        }
+        catch (FluentValidation.ValidationException exception)
+        {
+            return exception.ToValidationFailedResult(ModelState);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        return result.Match(() =>
+                Ok(result.Value),
+            exception =>
+            {
+                if (exception is NotFoundException)
+                {
+                    return NotFound(exception.Message);
+                }
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            });
+    }
+
     [HttpPost]
-    public async Task<IActionResult> AddAttribute([FromBody]AddAttributeCommandV1.AddAttributeCommand command)
+    public async Task<IActionResult> AddAttribute([FromBody] AddAttributeCommandV1.AddAttributeCommand command)
     {
         Result<AttributeDto> result;
 
@@ -57,46 +88,58 @@ public class AttributesController : ApiControllerBasev1
         {
             result = await _mediator.Send(command);
         }
-        catch (DbUpdateException e)
+        catch (FluentValidation.ValidationException e)
         {
-            return BadRequest();
+            return e.ToValidationFailedResult(ModelState);
         }
-        
-        if (!result.Succeded)
+        catch (Exception e)
         {
-            return BadRequest();
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        var url = Url.Link("GetAttributeByIdV1", new {id = result.Value?.Id}) ?? "N/A";
-        return Created(url,result.Value);
-    }    
-    
+        return result.Match(() =>
+        {
+            var url = Url.Link("GetAttributeByIdV1", new {id = result.Value?.Id}) ?? "N/A";
+            return Created(url, result.Value); 
+        }, exception =>
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        });
+    }
+
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateAttribute(int id,[FromBody]UpdateAttributeCommandV1.UpdateAttributeCommand command)
+    public async Task<IActionResult> UpdateAttribute(int id,
+        [FromBody] UpdateAttributeCommandV1.UpdateAttributeCommand command)
     {
         if (id != command.Id)
         {
             return BadRequest();
         }
-        
+
         Result<AttributeDto> result;
 
         try
         {
             result = await _mediator.Send(command);
         }
+        catch (FluentValidation.ValidationException exception)
+        {
+            return exception.ToValidationFailedResult(ModelState);
+        }
         catch (Exception e)
         {
-            return BadRequest();
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
-        
-        if (!result.Succeded)
+
+        return result.Match(() =>
         {
-            return BadRequest();
-        }
-        return Ok(result.Value);
-    }    
-    
+            return Ok(result.Value);
+        }, exception =>
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        });
+    }
+
     [HttpDelete]
     public async Task<IActionResult> DeleteAttribute(int id)
     {
@@ -106,18 +149,23 @@ public class AttributesController : ApiControllerBasev1
         {
             result = await _mediator.Send(new DeleteAttributeCommandV1.DeleteAttributeCommand(id));
         }
-        catch (DbUpdateException e)
+        catch (FluentValidation.ValidationException exception)
         {
-            return BadRequest();
+            return exception.ToValidationFailedResult(ModelState);
         }
-        
-        if (!result.Succeded)
+        catch (Exception e)
         {
-            return BadRequest();
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
-        return Ok(result.Value); // TODO consider to return NoContent https://stackoverflow.com/questions/25970523/restful-what-should-a-delete-response-body-contain
+
+        return result.Match(() =>
+        {
+            return
+                Ok(result.Value); // TODO consider to return NoContent https://stackoverflow.com/questions/25970523/restful-what-should-a-delete-response-body-contain
+
+        }, exception =>
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }); 
     }
-    
-    
-    
 }
